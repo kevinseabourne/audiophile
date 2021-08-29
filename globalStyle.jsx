@@ -1,27 +1,26 @@
 import { createGlobalStyle } from "styled-components";
-import manrope from "./fonts/Manrope[wght].ttf";
+import Manrope from "./fonts/Manrope[wght].ttf";
 
 export const GlobalStyle = createGlobalStyle`
 
 @font-face {
   font-family: "manrope";
-  font-style: normal;
+  font-variation-settings: 'wght' 400;
   font-display: optional;
-  src: url(${manrope}) format('truetype'),
+  src: url(${Manrope}) format('truetype'),
 }
 
 
 body {
-  height: 100%;
+  min-height: 100vh;
   width: 100%;
   margin: 0;
   background-color: #141414;
-  font-family: "manrope" -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  font-family: Manrope, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   color: #ffffff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-size: 15px;
-  font-weight: normal;
+  font-size: 15vw;
   line-height: 25px;
   scroll-snap-type: y mandatory;
 }
@@ -30,9 +29,7 @@ html {
   scroll-behavior: smooth;
 }
 
-span {
-  letter-spacing: 0px;
-}
+
 
 button {
   background: none;
