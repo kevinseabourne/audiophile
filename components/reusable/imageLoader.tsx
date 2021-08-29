@@ -134,9 +134,6 @@ const ImageLoader: FC<Props> = ({
           placeholderColor={placeholderColor}
         />
         {src && (
-          // <ImageAnimation
-          //
-          // >
           <Image
             src={src}
             alt={alt}
@@ -144,11 +141,10 @@ const ImageLoader: FC<Props> = ({
             objectFit="fill"
             layout="fill"
             priority={priority ? true : false}
-            variants={animation}
-            initial="hidden"
-            animate={isLoaded ? "show" : "hidden"}
+            // variants={animation}
+            // initial="hidden"
+            // animate={isLoaded ? "show" : "hidden"}
           />
-          // </ImageAnimation>
         )}
       </ImageContainer>
       {/* {loadingSpinner && !isLoaded && (
@@ -171,6 +167,7 @@ interface ContainerProps {
 
 const Container = styled.div<ContainerProps>`
   width: 100%;
+  height: 100%;
   position: relative;
   box-shadow: ${({ boxShadow }) => (boxShadow ? boxShadow : "none")};
   margin-top: ${({ marginTop }) => (marginTop ? marginTop : "none")};
@@ -225,4 +222,9 @@ const Placeholder = styled(motion.div)<PlaceholderProps>`
   box-sizing: border-box;
 `;
 
-const ImageAnimation = styled(motion.div)``;
+const ImageAnimation = styled(motion.div)`
+  position: relative;
+  width: 100%;
+  max-width: 143px;
+  height: 40px;
+`;
