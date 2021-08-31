@@ -5,9 +5,9 @@ export const GlobalStyle = createGlobalStyle`
 
 @font-face {
   font-family: "manrope";
-  font-variation-settings: 'wght' 400;
   font-display: optional;
   src: url(${Manrope}) format('truetype'),
+  font-weight: 1 999;
 }
 
 
@@ -20,7 +20,7 @@ body {
   color: #ffffff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-size: 15vw;
+  font-size: 15px;
   line-height: 25px;
   scroll-snap-type: y mandatory;
 }
@@ -49,7 +49,8 @@ h1,
 h2,
 h3,
 h4,
-h5 {
+h5,
+h6 {
   margin: 0;
 }
 
