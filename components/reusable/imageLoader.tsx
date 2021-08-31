@@ -106,12 +106,15 @@ const ImageLoader: FC<Props> = ({
 
   return (
     <Container
+      maxWidth={maxWidth}
+      width={width}
       boxShadow={boxShadow}
       borderRadius={borderRadius}
       marginTop={marginTop}
       marginBottom={marginBottom}
       marginLeft={marginLeft}
       marginRight={marginRight}
+      zIndex={zIndex}
     >
       <ImageContainer
         maxWidth={maxWidth}
@@ -141,6 +144,7 @@ const ImageLoader: FC<Props> = ({
             objectFit="fill"
             layout="fill"
             priority={priority ? true : false}
+            className="image"
             // variants={animation}
             // initial="hidden"
             // animate={isLoaded ? "show" : "hidden"}
@@ -157,18 +161,21 @@ const ImageLoader: FC<Props> = ({
 export default ImageLoader;
 
 interface ContainerProps {
+  maxWidth: string;
+  width: string;
   boxShadow: string;
   marginTop: string;
   marginBottom: string;
   marginLeft: string;
   marginRight: string;
   borderRadius: string;
+  zIndex: number;
 }
 
 const Container = styled.div<ContainerProps>`
-  width: 100%;
-  height: 100%;
   position: relative;
+  max-width: ${({ maxWidth }) => (maxWidth ? maxWidth : "100%")};
+  width: ${({ width }) => (width ? width : "100%")};
   box-shadow: ${({ boxShadow }) => (boxShadow ? boxShadow : "none")};
   margin-top: ${({ marginTop }) => (marginTop ? marginTop : "none")};
   margin-bottom: ${({ marginBottom }) =>
@@ -176,6 +183,12 @@ const Container = styled.div<ContainerProps>`
   margin-left: ${({ marginLeft }) => (marginLeft ? marginLeft : "none")};
   margin-right: ${({ marginRight }) => (marginRight ? marginRight : "none")};
   border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : "0px")};
+  z-index: ${({ zIndex }) => (zIndex ? zIndex : 0)};
+
+  .image {
+    border-radius: ${({ borderRadius }) =>
+      borderRadius ? borderRadius : "0px"};
+  }
 `;
 
 interface ImageContainerProps {
@@ -213,7 +226,7 @@ interface PlaceholderProps {
 
 const Placeholder = styled(motion.div)<PlaceholderProps>`
   width: 100%;
-  z-index: ${({ zIndex }) => (zIndex ? zIndex : 2)};
+  z-index: ${({ zIndex }) => (zIndex ? zIndex : 0)};
   padding-bottom: ${({ placeholderSize }) =>
     placeholderSize ? placeholderSize : "100%"};
   background: ${({ placeholderColor }) =>
