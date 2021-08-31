@@ -212,21 +212,6 @@ const Overlay = styled.div<OverlayProps>`
   visibility: ${({ burgerOpen }) => (burgerOpen ? "visible" : "hidden")};
   background-color: ${({ burgerOpen }) =>
     burgerOpen ? "rgba(0, 0, 0, 0.25)" : "transparent"};
-  &.overlayAnimation-enter {
-    background-color: transparent;
-  }
-  &.overlayAnimation-enter-active {
-    background-color: rgba(0, 0, 0, 0.25);
-    transition: all 0.3s;
-  }
-  &.overlayAnimation-exit {
-    background-color: rgba(0, 0, 0, 0.25);
-    transition: all 0.3s;
-  }
-  &.overlayAnimation-exit-active {
-    background-color: transparent;
-    transition: all 0.3s;
-  }
 `;
 
 interface ContentProps {
