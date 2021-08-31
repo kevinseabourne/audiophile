@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/router";
+import styled, { createGlobalStyle } from "styled-components";
+import { motion, AnimatePresence, AnimateSharedLayout } from "framer-motion";
 import ImageLoader from "./reusable/imageLoader";
 import CartIcon from "../public/icons/Combined Shape.svg";
 import CartItem from "./cartItem";
+import { isArrayEmpty } from "../lib/utils/isEmpty";
+import Button from "./reusable/button";
 
 interface Props {
   cartItems: {
@@ -36,73 +39,289 @@ const Cart: React.FC<Props> = ({
   handleCartItemQuantityChange,
   cartSubTotalPrice,
 }) => {
+  const { push } = useRouter();
   const [cartOpen, setCartOpen] = useState(false);
+  const cartButtonRef = useRef<HTMLButtonElement>(null);
+  const cartRef = useRef<HTMLDivElement>(null);
 
-  const cartDropdownAnimation = {
+  useEffect(() => {
+    cartRef.current && cartRef.current.focus();
+    window.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      window.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleClickOutside = (e: any) => {
+    if (
+      cartRef.current &&
+      !cartRef.current.contains(e.target) &&
+      !cartButtonRef.current.contains(e.target)
+    ) {
+      setCartOpen(false);
+    }
+  };
+
+  const overlayAnimation = {
     hidden: {
       opacity: 0,
-      y: -50,
       transition: {
+        delay: 0.1,
         bounce: 0,
       },
     },
     show: {
-      opacity: 1,
-      y: 0,
+      opacity: 0.4,
       transition: {
         bounce: 0,
       },
     },
   };
+
+  const cartDropdownAnimation = {
+    hidden: {
+      height: "0px",
+      opacity: 0,
+      y: 0,
+      transition: {
+        bounce: 0,
+      },
+    },
+    show: {
+      height: "auto",
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: 0.1,
+
+        bounce: 0,
+      },
+    },
+  };
+
+  const orangeHoverAnimation = {
+    hover: {
+      opacity: 1,
+      color: "#D87D4A",
+    },
+  };
   return (
     <Container>
-      <ImageLoader
-        src={CartIcon}
+      <GlobalStyle cartOpen={cartOpen} />
+      <ImageContainer
+        ref={cartButtonRef}
         onClick={() => setCartOpen(!cartOpen)}
-        alt="cart"
-        maxWidth="28px"
-      />
-      <AnimatePresence>
-        {cartOpen && (
-          <CartDropdown
-            variants={cartDropdownAnimation}
-            animate={cartOpen ? "show" : "hidden"}
-            initial="hidden"
-            exit="hidden"
-          >
-            <TopInfo>
-              <CartTotal>{`CART ${cartItems.length}`}</CartTotal>
-              <RemoveAllItems>Remove All</RemoveAllItems>
-            </TopInfo>
+      >
+        <ImageLoader
+          src={CartIcon}
+          alt="cart"
+          maxWidth="28px"
+          zIndex={120}
+          hover={true}
+        />
+      </ImageContainer>
+      <AnimateSharedLayout>
+        <AnimatePresence>
+          {cartOpen && (
+            <CartDropdown
+              ref={cartRef}
+              variants={cartDropdownAnimation}
+              initial="hidden"
+              animate={cartOpen ? "show" : "hidden"}
+              exit="hidden"
+              layout
+            >
+              {!isArrayEmpty(cartItems) && (
+                <InnerContainer layout>
+                  <TopInfo layout>
+                    <CartTotal>{`CART ${cartItems.length}`}</CartTotal>
+                    <RemoveAllItems
+                      variants={orangeHoverAnimation}
+                      whileHover="hover"
+                    >
+                      Remove All
+                    </RemoveAllItems>
+                  </TopInfo>
 
-            {cartItems.map((cartItem) => (
-              <CartItem
-                cartItem={cartItem}
-                handleCartItemQuantityChange={handleCartItemQuantityChange}
-                cartSubTotalPrice={cartSubTotalPrice}
-              />
-            ))}
-          </CartDropdown>
-        )}
-      </AnimatePresence>
+                  <CartItemsContainer>
+                    {cartItems.map((cartItem) => (
+                      <CartItem
+                        cartItem={cartItem}
+                        handleCartItemQuantityChange={
+                          handleCartItemQuantityChange
+                        }
+                        cartSubTotalPrice={cartSubTotalPrice}
+                      />
+                    ))}
+                    <CartItem
+                      // cartItem={cartItem}
+                      handleCartItemQuantityChange={
+                        handleCartItemQuantityChange
+                      }
+                      cartSubTotalPrice={cartSubTotalPrice}
+                    />
+                    <CartItem
+                      // cartItem={cartItem}
+                      handleCartItemQuantityChange={
+                        handleCartItemQuantityChange
+                      }
+                      cartSubTotalPrice={cartSubTotalPrice}
+                    />
+                  </CartItemsContainer>
+
+                  <CartSubTotalContainer>
+                    <TotalTitle>Total</TotalTitle>
+                    <CartSubTotalPrice>$5,396</CartSubTotalPrice>
+                  </CartSubTotalContainer>
+                  <Button
+                    title="checkout"
+                    backgroundColor="orange"
+                    hoverBackgroundColor="#FBAF85"
+                    color="#ffffff"
+                    width="313px"
+                    height="48px"
+                    onClick={() => {
+                      setCartOpen(false);
+                      push("/checkout");
+                    }}
+                  />
+                </InnerContainer>
+              )}
+              <InnerContainer layout>
+                {!isArrayEmpty(cartItems) && (
+                  <CartEmpty layout>Cart is Empty</CartEmpty>
+                )}
+              </InnerContainer>
+            </CartDropdown>
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {cartOpen && (
+            <Overlay
+              variants={overlayAnimation}
+              initial="hidden"
+              animate={cartOpen ? "show" : "hidden"}
+              exit="hidden"
+            />
+          )}
+        </AnimatePresence>
+      </AnimateSharedLayout>
     </Container>
   );
 };
 
 export default Cart;
 
+interface GlobalStyleProps {
+  cartOpen: boolean;
+}
+
+const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
+ body {
+   overflow: ${({ cartOpen }) => (cartOpen ? "hidden" : "scroll")};
+  }
+`;
+
 const Container = styled.div`
-  width: 377px;
-  height: 100%;
+  width 100%;
+  width: 28px;
+  height: 28px;
+  position: relative;
+  @media (max-width: 840px) {
+    display: none;
+  }
+`;
+
+const Overlay = styled(motion.div)`
+  min-height: 100vh;
+  width: 100%;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  background-color: ${({ theme }) => theme.colors.darkerBlack};
 `;
 
 const CartDropdown = styled(motion.div)`
+  position: absolute;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  width: 377px;
+  top: 93px;
+  box-sizing: border-box;
+  z-index: 1;
+  right: 0px;
   border-radius: 8px;
   background-color: ${({ theme }) => theme.colors.white};
 `;
 
-const TopInfo = styled.div``;
+const InnerContainer = styled(motion.div)`
+  padding: 33px 31px;
+  display: flex;
+  flex-direction: column;
+`;
 
-const CartTotal = styled.span``;
+const ImageContainer = styled(motion.button)`
+  width: 28px;
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
+`;
 
-const RemoveAllItems = styled.span``;
+const TopInfo = styled(motion.div)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 31px;
+`;
+
+const CartTotal = styled(motion.h6)`
+  color: ${({ theme }) => theme.colors.darkerBlack};
+  line-height: 25px;
+  letter-spacing: 1.28571px;
+`;
+
+const RemoveAllItems = styled(motion.button)`
+  opacity: 0.5;
+  font-weight: 200;
+  text-decoration: underline;
+  color: ${({ theme }) => theme.colors.darkerBlack};
+`;
+
+const CartItemsContainer = styled(motion.div)`
+  display: grid;
+  grid-template-columns: repeat(1, 313px);
+  grid-column-end: auto;
+  grid-gap: 24px 0px;
+  max-width: 313px;
+  margin-bottom: 32px;
+`;
+
+const CartSubTotalContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+`;
+
+const TotalTitle = styled.span`
+  opacity: 0.5;
+  font-weight: 200;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.colors.darkerBlack};
+`;
+
+const CartSubTotalPrice = styled.h6`
+  text-align: center;
+  line-height: 25px;
+  color: ${({ theme }) => theme.colors.darkerBlack};
+`;
+
+const CartEmpty = styled(motion.h6)`
+  color: ${({ theme }) => theme.colors.darkerBlack};
+  line-height: 25px;
+  letter-spacing: 1.28571px;
+  margin: auto;
+`;

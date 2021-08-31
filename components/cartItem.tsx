@@ -1,8 +1,6 @@
 import styled from "styled-components";
-import { useRouter } from "next/router";
 import ImageLoader from "./reusable/imageLoader";
 import QuantityButton from "./reusable/quantityButton";
-import Button from "./reusable/button";
 
 interface Props {
   cartItem: {
@@ -35,57 +33,63 @@ const CartItem: React.FC<Props> = ({
   handleCartItemQuantityChange,
   cartSubTotalPrice,
 }) => {
-  const { push } = useRouter();
   return (
     <Container>
       <ImageLoader
-        src={cartItem.images[0].image}
-        alt={cartItem.title}
+        src="https://chpistel.sirv.com/audiophile/product-yx1-earphones/desktop/image-product.jpg?w=1080"
+        alt="test"
         maxWidth="64px"
+        width="64px"
         borderRadius="8px"
+        placeholderColor="#F1F1F1"
       />
       <TitlePriceContainer>
-        <Title>{cartItem.title}</Title>
-        <Price>{`$${cartItem.price}`}</Price>
+        <Title>XX99 MK ||</Title>
+        <Price>{`$2,999`}</Price>
       </TitlePriceContainer>
       <QuantityButton
-        total={cartItem.cartQuantity}
-        id={cartItem.id}
+        total={1}
+        id={"323fsf"}
         handleCartItemQuantityChange={handleCartItemQuantityChange}
       />
-      <CartSubTotalContainer>
-        <TotalTitle>Total</TotalTitle>
-        <CartSubTotalPrice>{cartSubTotalPrice}</CartSubTotalPrice>
-      </CartSubTotalContainer>
-      <Button title="checkout" onClick={() => push("/checkout")} />
     </Container>
   );
 };
 
 export default CartItem;
 
-const Container = styled.div``;
+const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
 
 const TitlePriceContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  max-width: 120px;
+  margin-left: 16px;
+  margin-right: auto;
 `;
 
-const Title = styled.span``;
+const Title = styled.span`
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.darkerBlack};
+  white-space: nowrap;
+  overflow-wrap: break-word;
+  text-overflow: ellipsis;
+  overflow: hidden;
+`;
 
 const Price = styled.span`
-  opacity: 0.5
   font-size: 14px;
-`;
-
-const CartSubTotalContainer = styled.div``;
-
-const TotalTitle = styled.span`
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.darkerBlack};
   opacity: 0.5;
-`;
-
-const CartSubTotalPrice = styled.h6`
-  line-height: 25px;
-  text-align: center;
+  white-space: nowrap;
+  overflow-wrap: break-word;
+  text-overflow: ellipsis;
+  overflow: hidden;
 `;

@@ -4,6 +4,7 @@ import Link from "next/link";
 import ImageLoader from "./reusable/imageLoader";
 import Logo from "../public/icons/audiophile.svg";
 import Cart from "./cart";
+import ResponsiveHeader from "./responsiveHeader";
 
 interface Props {
   cartItems: {
@@ -53,27 +54,37 @@ const Header: React.FC<Props> = ({
   ]);
   return (
     <Container>
-      <ImageLoader
-        src={Logo}
-        alt="audiophile"
-        maxWidth="143px"
-        placeholderSize="52%"
-        priority={true}
-        centerImage={true}
-      />
+      <Link href="/">
+        <ImageContainer>
+          <ImageLoader
+            src={Logo}
+            alt="audiophile"
+            maxWidth="143px"
+            placeholderSize="52%"
+            priority={true}
+            centerImage={true}
+            hover={true}
+          />
+        </ImageContainer>
+      </Link>
+
       <LinksContainer>
         {links.map((link) => (
-          <Link href={link.route} key={link.title}>
+          <Link
+            href={link.route === "/" ? "/" : `/products/[id]`}
+            as={link.route === "/" ? "/" : `/products${link.route}`}
+            key={link.title}
+          >
             <LinkTitle>{link.title}</LinkTitle>
           </Link>
         ))}
       </LinksContainer>
-
       <Cart
         cartItems={cartItems}
         handleCartItemQuantityChange={handleCartItemQuantityChange}
         cartSubTotalPrice={cartSubTotalPrice}
       />
+      <ResponsiveHeader links={links} />
     </Container>
   );
 };
@@ -91,15 +102,42 @@ const Container = styled.div`
   right: 0px;
   margin-left: auto;
   margin-right: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   z-index: 20;
   border-bottom: 1px solid white;
 `;
 
-const LinkTitle = styled.h4``;
+const ImageContainer = styled.button`
+  width: 100%;
+  max-width: 143px;
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
+`;
+
+const LinkTitle = styled.button`
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 25px;
+  letter-spacing: 2px;
+  &:hover {
+    cursor: pointer;
+  }
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
+`;
 
 const LinksContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  width: 429px;
+  @media (max-width: 840px) {
+    display: none;
+  }
 `;
