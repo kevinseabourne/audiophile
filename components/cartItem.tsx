@@ -35,18 +35,20 @@ const CartItem: React.FC<Props> = ({
 }) => {
   return (
     <Container>
-      <ImageLoader
-        src="https://chpistel.sirv.com/audiophile/product-yx1-earphones/desktop/image-product.jpg?w=1080"
-        alt="test"
-        maxWidth="64px"
-        width="64px"
-        borderRadius="8px"
-        placeholderColor="#F1F1F1"
-      />
-      <TitlePriceContainer>
-        <Title>XX99 MK ||</Title>
-        <Price>{`$2,999`}</Price>
-      </TitlePriceContainer>
+      <ImageAndTitleContainer>
+        <ImageLoader
+          src="https://chpistel.sirv.com/audiophile/product-yx1-earphones/desktop/image-product.jpg?w=1080"
+          alt="test"
+          maxWidth="64px"
+          width="64px"
+          borderRadius="8px"
+          placeholderColor="#F1F1F1"
+        />
+        <TitlePriceContainer>
+          <Title>XX99 MK ||</Title>
+          <Price>{`$2,999`}</Price>
+        </TitlePriceContainer>
+      </ImageAndTitleContainer>
       <QuantityButton
         total={1}
         id={"323fsf"}
@@ -63,6 +65,19 @@ const Container = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  @media (max-width: 390px) {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+`;
+
+const ImageAndTitleContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  @media (max-width: 390px) {
+    margin-bottom: 24px;
+  }
 `;
 
 const TitlePriceContainer = styled.div`
@@ -72,6 +87,9 @@ const TitlePriceContainer = styled.div`
   max-width: 120px;
   margin-left: 16px;
   margin-right: auto;
+  @media (max-width: 840px) {
+    max-width: 90px;
+  }
 `;
 
 const Title = styled.span`

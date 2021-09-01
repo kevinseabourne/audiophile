@@ -30,30 +30,29 @@ interface Props {
     id: string
   ) => void;
   cartSubTotalPrice: string;
+  links: {
+    link: {
+      title: string;
+      route: string;
+    };
+    image: string;
+  }[];
 }
 
 const Header: React.FC<Props> = ({
   cartItems,
   handleCartItemQuantityChange,
   cartSubTotalPrice,
+  links,
 }) => {
-  const [links] = useState([
-    { title: "Home", route: "/" },
-    {
-      title: "Headphones",
-      route: "/headphones",
-    },
-    {
-      title: "Speakers",
-      route: "/speakers",
-    },
-    {
-      title: "Earphones",
-      route: "/earphones",
-    },
-  ]);
   return (
     <Container>
+      <ResponsiveHeader
+        links={links}
+        cartItems={cartItems}
+        handleCartItemQuantityChange={handleCartItemQuantityChange}
+        cartSubTotalPrice={cartSubTotalPrice}
+      />
       <Link href="/">
         <ImageContainer>
           <ImageLoader
@@ -71,11 +70,11 @@ const Header: React.FC<Props> = ({
       <LinksContainer>
         {links.map((link) => (
           <Link
-            href={link.route === "/" ? "/" : `/products/[id]`}
-            as={link.route === "/" ? "/" : `/products${link.route}`}
-            key={link.title}
+            href={link.link.route === "/" ? "/" : `/products/[id]`}
+            as={link.link.route === "/" ? "/" : `/products${link.link.route}`}
+            key={link.link.title}
           >
-            <LinkTitle>{link.title}</LinkTitle>
+            <LinkTitle>{link.link.title}</LinkTitle>
           </Link>
         ))}
       </LinksContainer>
@@ -84,7 +83,6 @@ const Header: React.FC<Props> = ({
         handleCartItemQuantityChange={handleCartItemQuantityChange}
         cartSubTotalPrice={cartSubTotalPrice}
       />
-      <ResponsiveHeader links={links} />
     </Container>
   );
 };
@@ -105,8 +103,9 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  z-index: 10;
+  background-color: ${({ theme }) => theme.colors.darkerBlack};
   justify-content: space-between;
-  z-index: 20;
   border-bottom: 1px solid white;
 `;
 
@@ -115,6 +114,16 @@ const ImageContainer = styled.button`
   max-width: 143px;
   &:focus:not(:focus-visible) {
     outline: none;
+  }
+  @media (max-width: 1109.83px) {
+    margin-left: 24px;
+  }
+  @media (max-width: 840px) {
+    margin-left: 0px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 `;
 

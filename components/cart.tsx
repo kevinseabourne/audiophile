@@ -111,6 +111,7 @@ const Cart: React.FC<Props> = ({
       <ImageContainer
         ref={cartButtonRef}
         onClick={() => setCartOpen(!cartOpen)}
+        aria-label="cart"
       >
         <ImageLoader
           src={CartIcon}
@@ -217,18 +218,15 @@ interface GlobalStyleProps {
 }
 
 const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
- body {
-   overflow: ${({ cartOpen }) => (cartOpen ? "hidden" : "scroll")};
-  }
+ 
 `;
 
 const Container = styled.div`
-  width 100%;
   width: 28px;
   height: 28px;
   position: relative;
-  @media (max-width: 840px) {
-    display: none;
+  @media (max-width: 1109.83px) {
+    margin-right: 24px;
   }
 `;
 
@@ -253,6 +251,9 @@ const CartDropdown = styled(motion.div)`
   right: 0px;
   border-radius: 8px;
   background-color: ${({ theme }) => theme.colors.white};
+  @media (max-width: 840px) {
+    width: calc(100vw - 48px);
+  }
 `;
 
 const InnerContainer = styled(motion.div)`
@@ -262,6 +263,9 @@ const InnerContainer = styled(motion.div)`
 `;
 
 const ImageContainer = styled(motion.button)`
+  position: absolute;
+  top: 0px;
+  right: 0px;
   width: 28px;
   &:focus:not(:focus-visible) {
     outline: none;
@@ -296,6 +300,10 @@ const CartItemsContainer = styled(motion.div)`
   grid-gap: 24px 0px;
   max-width: 313px;
   margin-bottom: 32px;
+  @media (max-width: 840px) {
+    grid-template-columns: repeat(1, 100%);
+    max-width: 100%;
+  }
 `;
 
 const CartSubTotalContainer = styled.div`

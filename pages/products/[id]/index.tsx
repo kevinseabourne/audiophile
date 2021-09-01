@@ -1,20 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
+import AppContext from "../../../context/appContext";
 import styled from "styled-components";
 import ProductGallery from "../../../components/productGallery";
 import RelatedProducts from "../../../components/relatedProducts";
-import CategoryImageLinks from "../../../components/CategoryImageLinks";
+import CategoryImageLinks from "../../../components/categoryImageLinks";
 import AboutUs from "../../../components/aboutUs";
 
 interface Props {}
 
 const ProductPage: React.FC<Props> = () => {
+  const { links } = useContext(AppContext);
   return (
     <Container>
       <ItemContainer>image, price, little info</ItemContainer>
       <MoreProductInfo>more product info</MoreProductInfo>
       <ProductGallery />
       <RelatedProducts />
-      <CategoryImageLinks />
+      <CategoryImageLinks links={links} />
       <AboutUs />
     </Container>
   );
@@ -22,7 +24,9 @@ const ProductPage: React.FC<Props> = () => {
 
 export default ProductPage;
 
-const Container = styled.div``;
+const Container = styled.div`
+  background-color: red;
+`;
 
 const ItemContainer = styled.div``;
 

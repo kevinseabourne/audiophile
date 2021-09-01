@@ -3,6 +3,7 @@ import styled, { ThemeProvider } from "styled-components";
 import { AppProps } from "next/app";
 import { GlobalStyle } from "../globalStyle";
 import Header from ".././components/header";
+import AppContext from "../context/appContext";
 
 export type MyTheme = {
   colors: {
@@ -32,6 +33,41 @@ function App({ Component, pageProps }: AppProps) {
   const [cartItems, setCartItems] = useState([]);
   const [cartSubTotalPrice, setCartSubTotalPrice] = useState("");
 
+  const [links] = useState([
+    {
+      link: {
+        title: "Home",
+        route: "/",
+      },
+      image: "",
+    },
+    {
+      link: {
+        title: "Headphones",
+        route: "/headphones",
+      },
+
+      image:
+        "https://chpistel.sirv.com/audiophile/shared/desktop/image-category-thumbnail-headphones.png?w=230&q=100",
+    },
+    {
+      link: {
+        title: "Speakers",
+        route: "/speakers",
+      },
+      image:
+        "https://chpistel.sirv.com/audiophile/shared/desktop/image-category-thumbnail-speakers.png?w=230&q=100",
+    },
+    {
+      link: {
+        title: "Earphones",
+        route: "/earphones",
+      },
+      image:
+        "https://chpistel.sirv.com/audiophile/shared/desktop/image-category-thumbnail-earphones.png?w=230&q=100",
+    },
+  ]);
+
   const handleCartItemQuantityChange = (
     operation: "increase" | "decrease",
     id: string
@@ -55,31 +91,37 @@ function App({ Component, pageProps }: AppProps) {
   const handleCartSubTotal = (updatedCart) => {};
 
   return (
-    <>
-      <GlobalStyle />
-      <ThemeProvider theme={theme}>
-        <Header
-          cartItems={cartItems}
-          handleCartItemQuantityChange={handleCartItemQuantityChange}
-          cartSubTotalPrice={cartSubTotalPrice}
-        />
-        <Wrapper>
-          <Component {...pageProps} />
-        </Wrapper>
-      </ThemeProvider>
-    </>
+    <AppContext.Provider
+      value={{
+        links,
+      }}
+    >
+      <>
+        <GlobalStyle />
+        <ThemeProvider theme={theme}>
+          <Header
+            links={links}
+            cartItems={cartItems}
+            handleCartItemQuantityChange={handleCartItemQuantityChange}
+            cartSubTotalPrice={cartSubTotalPrice}
+          />
+          <Wrapper>
+            <Component {...pageProps} />
+          </Wrapper>
+        </ThemeProvider>
+      </>
+    </AppContext.Provider>
   );
 }
 
 export default App;
 
 const Wrapper = styled.div`
-  min-height: 100vh;
+  height: 100vh;
   width: 100%;
   margin-left: auto;
   margin-right: auto;
   margin-top: 93px;
-  z-index: -100;
   max-width: 1109.83px;
-  background-color: white;
+  background-color: red;
 `;

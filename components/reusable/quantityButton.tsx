@@ -25,23 +25,22 @@ const QuantityButton: React.FC<Props> = ({
 
   return (
     <Container>
-      <Button
+      <DecreaseButton
         variants={orangeHoverAnimation}
         whileHover="hover"
         padding="6px 6.5px 6px 11.5px"
         onClick={() => handleCartItemQuantityChange("decrease", id)}
       >
         -
-      </Button>
+      </DecreaseButton>
       <Total>{total}</Total>
-      <Button
+      <IncreaseButton
         variants={orangeHoverAnimation}
         whileHover="hover"
-        padding="6px 11.5px 6px 6.5px"
         onClick={() => handleCartItemQuantityChange("increase", id)}
       >
         +
-      </Button>
+      </IncreaseButton>
     </Container>
   );
 };
@@ -57,9 +56,12 @@ const Container = styled.div`
   height: 32px;
   background-color: ${({ theme }) => theme.colors.silver};
   position: relative;
+  @media (max-width: 390px) {
+    width: 100%;
+  }
 `;
 
-const Button = styled(motion.button)<{ padding: string }>`
+const DecreaseButton = styled(motion.button)`
   width: 16px;
   font-weight: 700;
   color: ${({ theme }) => theme.colors.darkerBlack};
@@ -68,7 +70,25 @@ const Button = styled(motion.button)<{ padding: string }>`
   line-height: 18px;
   letter-spacing: 1px;
   box-sizing: content-box;
-  padding: ${({ padding }) => (padding ? padding : "0px")};
+  padding: 6px 6.5px 6px 11.5px;
+  @media (max-width: 390px) {
+    padding: 6px 26.5px 6px 27.5px;
+  }
+`;
+
+const IncreaseButton = styled(motion.button)`
+  width: 16px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.darkerBlack};
+  opacity: 0.25;
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: 1px;
+  box-sizing: content-box;
+  padding: 6px 11.5px 6px 6.5px;
+  @media (max-width: 390px) {
+    padding: 6px 27.5px 6px 26.5px;
+  }
 `;
 
 const Total = styled.span`
