@@ -119,6 +119,7 @@ const ImageLoader: FC<Props> = ({
       marginLeft={marginLeft}
       marginRight={marginRight}
       zIndex={zIndex}
+      onClick={onClick}
     >
       <ImageContainer
         maxWidth={maxWidth}
