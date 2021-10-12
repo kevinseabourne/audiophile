@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import Link from "next/link";
 import ImageLoader from "./reusable/imageLoader";
@@ -47,42 +47,44 @@ const Header: React.FC<Props> = ({
 }) => {
   return (
     <Container>
-      <ResponsiveHeader
-        links={links}
-        cartItems={cartItems}
-        handleCartItemQuantityChange={handleCartItemQuantityChange}
-        cartSubTotalPrice={cartSubTotalPrice}
-      />
-      <Link href="/">
-        <ImageContainer>
-          <ImageLoader
-            src={Logo}
-            alt="audiophile"
-            maxWidth="143px"
-            placeholderSize="52%"
-            priority={true}
-            centerImage={true}
-            hover={true}
-          />
-        </ImageContainer>
-      </Link>
+      <Wrapper>
+        <ResponsiveHeader
+          links={links}
+          cartItems={cartItems}
+          handleCartItemQuantityChange={handleCartItemQuantityChange}
+          cartSubTotalPrice={cartSubTotalPrice}
+        />
+        <Link href="/">
+          <ImageContainer>
+            <ImageLoader
+              src={Logo}
+              alt="audiophile"
+              maxWidth="143px"
+              placeholderSize="52%"
+              priority={true}
+              centerImage={true}
+              hover={true}
+            />
+          </ImageContainer>
+        </Link>
 
-      <LinksContainer>
-        {links.map((link) => (
-          <Link
-            href={link.link.route === "/" ? "/" : `/products/[id]`}
-            as={link.link.route === "/" ? "/" : `/products${link.link.route}`}
-            key={link.link.title}
-          >
-            <LinkTitle>{link.link.title}</LinkTitle>
-          </Link>
-        ))}
-      </LinksContainer>
-      <Cart
-        cartItems={cartItems}
-        handleCartItemQuantityChange={handleCartItemQuantityChange}
-        cartSubTotalPrice={cartSubTotalPrice}
-      />
+        <LinksContainer>
+          {links.map((link) => (
+            <Link
+              href={link.link.route === "/" ? "/" : `/products/[id]`}
+              as={link.link.route === "/" ? "/" : `/products${link.link.route}`}
+              key={link.link.title}
+            >
+              <LinkTitle>{link.link.title}</LinkTitle>
+            </Link>
+          ))}
+        </LinksContainer>
+        <Cart
+          cartItems={cartItems}
+          handleCartItemQuantityChange={handleCartItemQuantityChange}
+          cartSubTotalPrice={cartSubTotalPrice}
+        />
+      </Wrapper>
     </Container>
   );
 };
@@ -90,7 +92,6 @@ const Header: React.FC<Props> = ({
 export default Header;
 
 const Container = styled.div`
-  max-width: 1109.83px;
   width: 100%;
   height: 93px;
   position: fixed;
@@ -104,9 +105,20 @@ const Container = styled.div`
   flex-direction: row;
   align-items: center;
   z-index: 10;
-  background-color: ${({ theme }) => theme.colors.darkerBlack};
+  background-color: #191919;
+  justify-content: center;
+`;
+
+const Wrapper = styled.div`
+  max-width: 1109.83px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  z-index: 10;
   justify-content: space-between;
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid RGBA(255, 255, 255, 0.2);
 `;
 
 const ImageContainer = styled.button`
@@ -132,8 +144,11 @@ const LinkTitle = styled.button`
   font-size: 13px;
   line-height: 25px;
   letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: all 0.25s;
   &:hover {
     cursor: pointer;
+    color: ${({ theme }) => theme.colors.orange};
   }
   &:focus:not(:focus-visible) {
     outline: none;
