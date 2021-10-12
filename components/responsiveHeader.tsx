@@ -106,7 +106,7 @@ const ResponsiveHeader: React.FC<Props> = ({
       },
     },
     show: {
-      height: "84vh",
+      height: "100vh",
       opacity: 1,
       y: 0,
       transition: {
@@ -159,15 +159,19 @@ const ResponsiveHeader: React.FC<Props> = ({
           </PaddingContainer>
         </Content>
       </AnimatePresence>
-      <Overlay
-        variants={overlayAnimation}
-        initial="hidden"
-        animate={burgerOpen ? "show" : "hidden"}
-        exit="hidden"
-        ref={overlayRef}
-        role="dialog"
-        aria-label="overlay"
-      />
+      <AnimatePresence>
+        {burgerOpen && (
+          <Overlay
+            variants={overlayAnimation}
+            initial="hidden"
+            animate={burgerOpen ? "show" : "hidden"}
+            exit="hidden"
+            ref={overlayRef}
+            role="dialog"
+            aria-label="overlay"
+          />
+        )}
+      </AnimatePresence>
     </Container>
   );
 };
@@ -281,26 +285,25 @@ const Content = styled(motion.nav)`
   top: 0px;
   bottom: 0px;
   left: 0px;
-  right: 0px;
   margin-top: 93px;
-  margin-left: auto;
-  margin-right: auto;
-  max-height: 750px;
   display: flex;
   z-index: 12;
+  box-sizing: border-box;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  position: absolute;
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
+  position: fixed;
   width: 100%;
   overflow: scroll;
-  background-color: ${({ theme }) => theme.colors.white};
 `;
 
 const PaddingContainer = styled(motion.div)`
   width: 100%;
+  max-height: 750px;
   box-sizing: border-box;
   padding: 32px 24px 35px 24px;
+  margin-bottom: 93px;
+  background-color: ${({ theme }) => theme.colors.white};
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
 `;

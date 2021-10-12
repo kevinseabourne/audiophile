@@ -4,6 +4,7 @@ import { AppProps } from "next/app";
 import { GlobalStyle } from "../globalStyle";
 import Header from ".././components/header";
 import AppContext from "../context/appContext";
+import Footer from "../components/footer";
 
 export type MyTheme = {
   colors: {
@@ -105,9 +106,11 @@ function App({ Component, pageProps }: AppProps) {
             handleCartItemQuantityChange={handleCartItemQuantityChange}
             cartSubTotalPrice={cartSubTotalPrice}
           />
+
           <Wrapper>
             <Component {...pageProps} />
           </Wrapper>
+          <Footer links={links} />
         </ThemeProvider>
       </>
     </AppContext.Provider>
@@ -116,12 +119,26 @@ function App({ Component, pageProps }: AppProps) {
 
 export default App;
 
+const Container = styled.div`
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+`;
+
 const Wrapper = styled.div`
-  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  height: 100%;
   width: 100%;
   margin-left: auto;
   margin-right: auto;
   margin-top: 93px;
-  max-width: 1109.83px;
-  background-color: red;
+  max-width: 1190px;
+  @media (max-width: 500px) {
+    max-width: 1160px;
+  }
 `;

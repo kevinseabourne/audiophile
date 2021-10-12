@@ -15,7 +15,7 @@ body {
   min-height: 100vh;
   width: 100%;
   margin: 0;
-  background-color: #141414;
+  background-color: white;
   font-family: Manrope, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   color: #ffffff;
   -webkit-font-smoothing: antialiased;
