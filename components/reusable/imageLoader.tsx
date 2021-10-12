@@ -13,6 +13,8 @@ interface Props {
   onClick?: () => void;
   borderRadius?: string;
   hover?: boolean;
+  objectFit?: string;
+  objectPosition?: string;
   duration?: string;
   boxShadow?: string;
   loadingSpinner?: boolean;
@@ -43,6 +45,8 @@ const ImageLoader: FC<Props> = ({
   onClick,
   borderRadius,
   hover,
+  objectFit,
+  objectPosition,
   duration,
   boxShadow,
   loadingSpinner,
@@ -141,7 +145,14 @@ const ImageLoader: FC<Props> = ({
             src={src}
             alt={alt}
             onLoadingComplete={handleLoadComplete}
-            objectFit="fill"
+            objectFit={
+              objectFit === "cover"
+                ? "cover"
+                : objectFit === "contain"
+                ? "contain"
+                : "fill"
+            }
+            objectPosition={objectPosition}
             layout="fill"
             priority={priority ? true : false}
             className="image"
