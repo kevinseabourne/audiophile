@@ -124,78 +124,82 @@ const Cart: React.FC<Props> = ({
       <AnimateSharedLayout>
         <AnimatePresence>
           {cartOpen && (
-            <CartDropdown
-              ref={cartRef}
-              variants={cartDropdownAnimation}
-              initial="hidden"
-              animate={cartOpen ? "show" : "hidden"}
-              exit="hidden"
-              layout
-            >
-              {!isArrayEmpty(cartItems) && (
-                <InnerContainer layout>
-                  <TopInfo layout>
-                    <CartTotal>{`CART ${cartItems.length}`}</CartTotal>
-                    <RemoveAllItems
-                      variants={orangeHoverAnimation}
-                      whileHover="hover"
-                    >
-                      Remove All
-                    </RemoveAllItems>
-                  </TopInfo>
+            <CartDropdownContainer>
+              <CartDropdown
+                ref={cartRef}
+                variants={cartDropdownAnimation}
+                initial="hidden"
+                animate={cartOpen ? "show" : "hidden"}
+                exit="hidden"
+                layout
+              >
+                {!isArrayEmpty(cartItems) && (
+                  <InnerContainer layout>
+                    <TopInfo layout>
+                      <CartTotal>{`CART ${cartItems.length}`}</CartTotal>
+                      <RemoveAllItems
+                        variants={orangeHoverAnimation}
+                        whileHover="hover"
+                      >
+                        Remove All
+                      </RemoveAllItems>
+                    </TopInfo>
 
-                  <CartItemsContainer>
-                    {cartItems.map((cartItem) => (
+                    <CartItemsContainer>
+                      {cartItems.map((cartItem) => (
+                        <CartItem
+                          cartItem={cartItem}
+                          handleCartItemQuantityChange={
+                            handleCartItemQuantityChange
+                          }
+                          cartSubTotalPrice={cartSubTotalPrice}
+                        />
+                      ))}
                       <CartItem
-                        cartItem={cartItem}
+                        // cartItem={cartItem}
                         handleCartItemQuantityChange={
                           handleCartItemQuantityChange
                         }
                         cartSubTotalPrice={cartSubTotalPrice}
                       />
-                    ))}
-                    <CartItem
-                      // cartItem={cartItem}
-                      handleCartItemQuantityChange={
-                        handleCartItemQuantityChange
-                      }
-                      cartSubTotalPrice={cartSubTotalPrice}
-                    />
-                    <CartItem
-                      // cartItem={cartItem}
-                      handleCartItemQuantityChange={
-                        handleCartItemQuantityChange
-                      }
-                      cartSubTotalPrice={cartSubTotalPrice}
-                    />
-                  </CartItemsContainer>
+                      <CartItem
+                        // cartItem={cartItem}
+                        handleCartItemQuantityChange={
+                          handleCartItemQuantityChange
+                        }
+                        cartSubTotalPrice={cartSubTotalPrice}
+                      />
+                    </CartItemsContainer>
 
-                  <CartSubTotalContainer>
-                    <TotalTitle>Total</TotalTitle>
-                    <CartSubTotalPrice>$5,396</CartSubTotalPrice>
-                  </CartSubTotalContainer>
-                  <Button
-                    title="checkout"
-                    backgroundColor="orange"
-                    hoverBackgroundColor="#FBAF85"
-                    color="#ffffff"
-                    width="313px"
-                    height="48px"
-                    onClick={() => {
-                      setCartOpen(false);
-                      push("/checkout");
-                    }}
-                  />
-                </InnerContainer>
-              )}
-              <InnerContainer layout>
-                {!isArrayEmpty(cartItems) && (
-                  <CartEmpty layout>Cart is Empty</CartEmpty>
+                    <CartSubTotalContainer>
+                      <TotalTitle>Total</TotalTitle>
+                      <CartSubTotalPrice>$5,396</CartSubTotalPrice>
+                    </CartSubTotalContainer>
+                    <Button
+                      title="checkout"
+                      backgroundColor="orange"
+                      hoverBackgroundColor="#FBAF85"
+                      color="#ffffff"
+                      width="313px"
+                      height="48px"
+                      onClick={() => {
+                        setCartOpen(false);
+                        push("/checkout");
+                      }}
+                      responsiveFullWidth={true}
+                    />
+                  </InnerContainer>
                 )}
-              </InnerContainer>
-            </CartDropdown>
+                <InnerContainer layout>
+                  {!isArrayEmpty(cartItems) && (
+                    <CartEmpty layout>Cart is Empty</CartEmpty>
+                  )}
+                </InnerContainer>
+              </CartDropdown>
+            </CartDropdownContainer>
           )}
         </AnimatePresence>
+
         <AnimatePresence>
           {cartOpen && (
             <Overlay
@@ -218,7 +222,9 @@ interface GlobalStyleProps {
 }
 
 const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
- 
+ body {
+   overflow: ${({ cartOpen }) => (cartOpen ? "hidden" : "scroll")};
+  }
 `;
 
 const Container = styled.div`
@@ -239,16 +245,34 @@ const Overlay = styled(motion.div)`
   background-color: ${({ theme }) => theme.colors.darkerBlack};
 `;
 
-const CartDropdown = styled(motion.div)`
+const CartDropdownContainer = styled.div`
   position: absolute;
+  height: 100vh;
+  overflow: scroll;
+  right: 0px;
+  top: 93px;
+  bottom: 0px;
+  z-index: 2;
+  padding-top: 24px;
+  padding-bottom: 114px;
+  width: 377px;
+  box-sizing: border-box;
+  @media (max-width: 840px) {
+    position: fixed;
+    width: auto;
+    left: 0px;
+  }
+`;
+
+const CartDropdown = styled(motion.div)`
   display: flex;
-  overflow: hidden;
   flex-direction: column;
   width: 377px;
   top: 93px;
+  margin: auto;
+  overflow: hidden;
   box-sizing: border-box;
-  z-index: 1;
-  right: 0px;
+  z-index: 2;
   border-radius: 8px;
   background-color: ${({ theme }) => theme.colors.white};
   @media (max-width: 840px) {
@@ -263,7 +287,7 @@ const InnerContainer = styled(motion.div)`
 `;
 
 const ImageContainer = styled(motion.button)`
-  position: absolute;
+  position: relative;
   top: 0px;
   right: 0px;
   width: 28px;
