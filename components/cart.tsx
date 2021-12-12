@@ -10,23 +10,23 @@ import Button from "./reusable/button";
 
 interface Props {
   cartItems: {
+    dateAdded: string;
     id: string;
-    date: string;
     images: {
-      image: string;
       title: string;
+      image: string;
     }[];
     inTheBox: {
-      units: string;
       title: string;
-    };
+      units: number;
+    }[];
     longDescription: string;
     price: string;
     shortDescription: string;
     title: string;
-    lowerCaseTitle: string;
     type: string;
     cartQuantity: number;
+    cartPrice: string;
   }[];
   handleCartItemQuantityChange: (
     operation: "decrease" | "increase",
