@@ -24,6 +24,7 @@ interface Props {
     price: string;
     shortDescription: string;
     title: string;
+    lowerCaseTitle: string;
     type: string;
     cartQuantity: number;
   }[];
@@ -31,13 +32,19 @@ interface Props {
     operation: "decrease" | "increase",
     id: string
   ) => void;
+  emptyCart: () => void;
   cartSubTotalPrice: string;
+  addToCartDisplayCart: boolean;
+  resetAddToCartDisplayCart: () => void;
 }
 
 const Cart: React.FC<Props> = ({
   cartItems,
   handleCartItemQuantityChange,
   cartSubTotalPrice,
+  emptyCart,
+  addToCartDisplayCart,
+  resetAddToCartDisplayCart,
 }) => {
   const { push } = useRouter();
   const [cartOpen, setCartOpen] = useState(false);
@@ -51,6 +58,14 @@ const Cart: React.FC<Props> = ({
       window.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+    // decided to keep cartOpen state in the cart component. Instead of moving it and it's functions to the app component.
+    if (addToCartDisplayCart) {
+      setCartOpen(true);
+      resetAddToCartDisplayCart();
+    }
+  }, [addToCartDisplayCart]);
 
   const handleClickOutside = (e: any) => {
     if (
@@ -133,13 +148,14 @@ const Cart: React.FC<Props> = ({
                 exit="hidden"
                 layout
               >
-                {!isArrayEmpty(cartItems) && (
+                {isArrayEmpty(cartItems) && (
                   <InnerContainer layout>
                     <TopInfo layout>
                       <CartTotal>{`CART ${cartItems.length}`}</CartTotal>
                       <RemoveAllItems
                         variants={orangeHoverAnimation}
                         whileHover="hover"
+                        onClick={emptyCart}
                       >
                         Remove All
                       </RemoveAllItems>
@@ -148,6 +164,7 @@ const Cart: React.FC<Props> = ({
                     <CartItemsContainer>
                       {cartItems.map((cartItem) => (
                         <CartItem
+                          key={cartItem.id}
                           cartItem={cartItem}
                           handleCartItemQuantityChange={
                             handleCartItemQuantityChange
@@ -155,25 +172,11 @@ const Cart: React.FC<Props> = ({
                           cartSubTotalPrice={cartSubTotalPrice}
                         />
                       ))}
-                      <CartItem
-                        // cartItem={cartItem}
-                        handleCartItemQuantityChange={
-                          handleCartItemQuantityChange
-                        }
-                        cartSubTotalPrice={cartSubTotalPrice}
-                      />
-                      <CartItem
-                        // cartItem={cartItem}
-                        handleCartItemQuantityChange={
-                          handleCartItemQuantityChange
-                        }
-                        cartSubTotalPrice={cartSubTotalPrice}
-                      />
                     </CartItemsContainer>
 
                     <CartSubTotalContainer>
                       <TotalTitle>Total</TotalTitle>
-                      <CartSubTotalPrice>$5,396</CartSubTotalPrice>
+                      <CartSubTotalPrice>{cartSubTotalPrice}</CartSubTotalPrice>
                     </CartSubTotalContainer>
                     <Button
                       title="checkout"
@@ -182,6 +185,7 @@ const Cart: React.FC<Props> = ({
                       color="#ffffff"
                       width="313px"
                       height="48px"
+                      mediaQuery="840px"
                       onClick={() => {
                         setCartOpen(false);
                         push("/checkout");
@@ -231,8 +235,9 @@ const Container = styled.div`
   width: 28px;
   height: 28px;
   position: relative;
-  @media (max-width: 1109.83px) {
-    margin-right: 24px;
+  padding-right: 39px;
+  @media (max-width: 678px) {
+    padding-right: 24px;
   }
 `;
 

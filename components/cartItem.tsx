@@ -1,25 +1,28 @@
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import ImageLoader from "./reusable/imageLoader";
 import QuantityButton from "./reusable/quantityButton";
+import { formatPrice } from "../lib/utils/formatPrice";
 
 interface Props {
   cartItem: {
+    dateAdded: string;
     id: string;
-    date: string;
     images: {
-      image: string;
       title: string;
+      image: string;
     }[];
     inTheBox: {
-      units: string;
       title: string;
-    };
+      units: number;
+    }[];
     longDescription: string;
     price: string;
     shortDescription: string;
     title: string;
     type: string;
     cartQuantity: number;
+    cartPrice: string;
   };
   handleCartItemQuantityChange: (
     operation: "decrease" | "increase",
@@ -33,11 +36,22 @@ const CartItem: React.FC<Props> = ({
   handleCartItemQuantityChange,
   cartSubTotalPrice,
 }) => {
+  const [cartItemPrice, setCartItemPrice] = useState("");
+  useEffect(() => {
+    handlePriceFormat();
+  }, []);
+
+  const handlePriceFormat = () => {
+    const cartItemClone = { ...cartItem };
+    const price = formatPrice(cartItemClone.price);
+    setCartItemPrice(price);
+  };
+
   return (
     <Container>
       <ImageAndTitleContainer>
         <ImageLoader
-          src="https://chpistel.sirv.com/audiophile/product-yx1-earphones/desktop/image-product.jpg?w=1080"
+          src={cartItem.images[0].image}
           alt="test"
           maxWidth="64px"
           width="64px"
@@ -45,13 +59,17 @@ const CartItem: React.FC<Props> = ({
           placeholderColor="#F1F1F1"
         />
         <TitlePriceContainer>
-          <Title>XX99 MK ||</Title>
-          <Price>{`$2,999`}</Price>
+          <Title>{cartItem.title}</Title>
+          <Price>{cartItemPrice}</Price>
         </TitlePriceContainer>
       </ImageAndTitleContainer>
       <QuantityButton
-        total={1}
-        id={"323fsf"}
+        total={cartItem.cartQuantity}
+        id={cartItem.id}
+        width="96px"
+        height="32px"
+        mediaQuery="390px"
+        responsiveFullWidth={true}
         handleCartItemQuantityChange={handleCartItemQuantityChange}
       />
     </Container>
