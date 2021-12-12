@@ -6,9 +6,7 @@ import Header from ".././components/header";
 import AppContext from "../context/appContext";
 import Footer from "../components/footer";
 import { isArrayEmpty, isObjEmpty } from "../lib/utils/isEmpty";
-import Dinero from "dinero.js";
 import { useRouter } from "next/router";
-// var accounting = require("accounting");
 import accounting from "accounting";
 import Big from "big.js";
 
