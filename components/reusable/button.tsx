@@ -15,6 +15,7 @@ interface Props {
   hoverOpacity?: string;
   zIndex?: number;
   responsiveFullWidth?: boolean;
+  mediaQuery?: string;
 }
 
 const CategoryImageLinks: React.FC<Props> = ({
@@ -30,6 +31,7 @@ const CategoryImageLinks: React.FC<Props> = ({
   hoverOpacity,
   zIndex,
   responsiveFullWidth,
+  mediaQuery,
 }) => {
   const buttonAnimation = {
     hidden: {},
@@ -54,6 +56,7 @@ const CategoryImageLinks: React.FC<Props> = ({
       zIndex={zIndex}
       whileHover="hover"
       responsiveFullWidth={responsiveFullWidth}
+      mediaQuery={mediaQuery}
     >
       {title}
     </Button>
@@ -70,6 +73,7 @@ interface ButtonProps {
   border: string;
   zIndex: number;
   responsiveFullWidth: boolean;
+  mediaQuery: string;
 }
 
 const Button = styled(motion.button)<ButtonProps>`
@@ -89,8 +93,11 @@ const Button = styled(motion.button)<ButtonProps>`
   &:focus:not(:focus-visible) {
     outline: none;
   }
+  @media (max-width: 390px) {
+    padding: 6px 27.5px 6px 26.5px;
+  }
 
-  @media (max-width: 840px) {
+  @media ${({ mediaQuery }) => `(max-width: ${mediaQuery})`} {
     width: ${({ responsiveFullWidth, width }) =>
       responsiveFullWidth ? "100%" : width};
   }
