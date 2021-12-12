@@ -34,7 +34,6 @@ interface Props {
 const CartItem: React.FC<Props> = ({
   cartItem,
   handleCartItemQuantityChange,
-  cartSubTotalPrice,
 }) => {
   const [cartItemPrice, setCartItemPrice] = useState("");
   useEffect(() => {

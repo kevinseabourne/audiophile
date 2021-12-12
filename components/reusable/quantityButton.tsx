@@ -50,7 +50,7 @@ const QuantityButton: React.FC<Props> = ({
       mediaQuery={mediaQuery}
       responsiveFullWidth={responsiveFullWidth}
     >
-      <DecreaseButton
+      {/* <DecreaseButton
         variants={orangeHoverAnimation}
         whileHover="hover"
         mediaQuery={mediaQuery}
@@ -68,7 +68,7 @@ const QuantityButton: React.FC<Props> = ({
         onClick={() => handleCartItemQuantityChange("increase", id)}
       >
         +
-      </IncreaseButton>
+      </IncreaseButton> */}
     </Container>
   );
 };
