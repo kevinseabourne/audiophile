@@ -1,15 +1,26 @@
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import ImageLoader from "./reusable/imageLoader";
 import Button from "./reusable/button";
 
-interface Props {
-  pageWidth: number;
-}
+interface Props {}
 
-const FeaturedProducts: React.FC<Props> = ({ pageWidth }) => {
+const FeaturedProducts: React.FC<Props> = () => {
   const { push } = useRouter();
+
+  const [pageWidth, setpageWidth] = useState(null);
+
+  useEffect(() => {
+    setpageWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize); // <-- I am only interested in window.innerWidth !
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const handleResize = () => {
+    setpageWidth(window.innerWidth);
+  };
+
   return (
     <Container>
       <ProductOne>

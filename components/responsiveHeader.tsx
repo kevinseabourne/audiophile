@@ -13,22 +13,23 @@ interface Props {
     image: string;
   }[];
   cartItems: {
+    dateAdded: string;
     id: string;
-    date: string;
     images: {
-      image: string;
       title: string;
+      image: string;
     }[];
     inTheBox: {
-      units: string;
       title: string;
-    };
+      units: number;
+    }[];
     longDescription: string;
     price: string;
     shortDescription: string;
     title: string;
     type: string;
     cartQuantity: number;
+    cartPrice: string;
   }[];
   handleCartItemQuantityChange: (
     operation: "decrease" | "increase",
@@ -194,13 +195,9 @@ const Container = styled(motion.div)`
   display: none;
   align-items: center;
   justify-content: center;
-  margin-right: auto;
   z-index: 100;
   @media (max-width: 840px) {
     display: flex;
-  }
-  @media (max-width: 350px) {
-    width: 250px;
   }
 `;
 
@@ -209,8 +206,8 @@ const Burger = styled.button`
   position: relative;
   width: 16px;
   height: 15px;
-  padding: 24px;
-  margin-right: auto;
+  padding: 39px;
+  margin-right: 3px;
   z-index: 200;
   background-color: transparent;
   box-sizing: inherit;
@@ -224,9 +221,9 @@ const Burger = styled.button`
   @media (max-width: 840px) {
     display: flex;
   }
-  @media (max-width: 330px) {
-    padding-left: 21.4px;
-    padding-right: 21.4px;
+  @media (max-width: 640px) {
+    padding: 24px;
+    margin-right: 0px;
   }
 `;
 

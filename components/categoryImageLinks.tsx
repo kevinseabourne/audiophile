@@ -12,17 +12,27 @@ interface Props {
     };
     image: string;
   }[];
-  pageWidth: number;
 }
 
-const CategoryImageLinks: React.FC<Props> = ({ links, pageWidth }) => {
+const CategoryImageLinks: React.FC<Props> = ({ links }) => {
   const { push } = useRouter();
   const [productLinks, setProductLinks] = useState([]);
+  const [pageWidth, setpageWidth] = useState(null);
+
+  useEffect(() => {
+    setpageWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize); // <-- I am only interested in window.innerWidth !
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const filteredLinks = links.filter((link) => link.link.title !== "Home");
     setProductLinks(filteredLinks);
   }, [links]);
+
+  const handleResize = () => {
+    setpageWidth(window.innerWidth);
+  };
 
   return (
     <Container>
@@ -59,10 +69,11 @@ export default CategoryImageLinks;
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(min-content, 350px));
   grid-column-end: auto;
   grid-gap: 0px 30px;
-  @media (max-width: 750px) {
+  justify-content: center;
+  @media (max-width: 678px) {
     grid-template-columns: repeat(1, 100%);
     grid-gap: 16px 0px;
     width: 100%;

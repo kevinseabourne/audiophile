@@ -1,4 +1,7 @@
 module.exports = {
+  experimental: {
+    styledComponents: true,
+  },
   // add more font or image formats if importing them to here.
   images: {
     domains: ["chpistel.sirv.com"],

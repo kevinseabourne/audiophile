@@ -17,8 +17,8 @@ interface Props {
   objectPosition?: string;
   duration?: string;
   boxShadow?: string;
-  loadingSpinner?: boolean;
-  priority?: boolean; // true or false to show a loading spinner when the image is still loading
+  loadingSpinner?: boolean; // true or false to show a loading spinner when the image is still loading
+  priority?: boolean;
   centerImage?: boolean;
   contentLoaded?: boolean;
   handleOnLoadOutside?: Function;

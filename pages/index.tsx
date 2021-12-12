@@ -7,6 +7,7 @@ import Button from "../components/reusable/button";
 import CategoryImageLinks from "../components/categoryImageLinks";
 import FeaturedProducts from "../components/featuredProducts";
 import AboutUs from "../components/aboutUs";
+import { getAllProducts } from "./api/products";
 
 export default function Home() {
   const { links } = useContext(AppContext);
@@ -15,6 +16,11 @@ export default function Home() {
   const [pageWidth, setpageWidth] = useState(null);
 
   useEffect(() => {
+    async function fetchData() {
+      const data = await getAllProducts();
+      console.log(data);
+    }
+    fetchData();
     setpageWidth(window.innerWidth);
     window.addEventListener("resize", handleResize); // <-- I am only interested in window.innerWidth !
     return () => window.removeEventListener("resize", handleResize);
@@ -39,7 +45,7 @@ export default function Home() {
                 <Button
                   title="See Product"
                   onClick={() =>
-                    push("/products/headphones/xx99-mark-||-headphones")
+                    push("/products/headphones/xx99-mark-ii-headphones")
                   }
                   height="48px"
                   width="160px"
@@ -50,39 +56,45 @@ export default function Home() {
               </InfoContainer>
             </InnerWrapper>
           </Wrapper>
-          <ImageLoader
-            src={
-              pageWidth <= 1190
-                ? "https://chpistel.sirv.com/audiophile/home/tablet/image-header.jpg"
-                : pageWidth <= 608
-                ? "https://chpistel.sirv.com/audiophile/home/mobile/image-hero.jpg?&q=100"
-                : "https://chpistel.sirv.com/audiophile/home/desktop/image-hero.jpg?&q=100"
-            }
-            alt="banner"
-            width="100%"
-            objectFit="cover"
-            maxWidth={
-              pageWidth <= 1190 ? (pageWidth <= 375 ? "100%" : "729px") : "100%"
-            }
-            placeholderSize={
-              pageWidth <= 1190
-                ? pageWidth <= 375
-                  ? "580.6px"
-                  : "729px"
-                : "730px"
-            }
-            priority={true}
-          />
+          {pageWidth && (
+            <ImageLoader
+              src={
+                pageWidth <= 1190
+                  ? "https://chpistel.sirv.com/audiophile/home/tablet/image-header.jpg"
+                  : pageWidth <= 608
+                  ? "https://chpistel.sirv.com/audiophile/home/mobile/image-hero.jpg?&q=100"
+                  : "https://chpistel.sirv.com/audiophile/home/desktop/image-hero.jpg?&q=100"
+              }
+              alt="banner"
+              width="100%"
+              objectFit="cover"
+              maxWidth={
+                pageWidth <= 1190
+                  ? pageWidth <= 375
+                    ? "100%"
+                    : "729px"
+                  : "100%"
+              }
+              placeholderSize={
+                pageWidth <= 1190
+                  ? pageWidth <= 375
+                    ? "580.6px"
+                    : "729px"
+                  : "730px"
+              }
+              priority={true}
+            />
+          )}
         </ImageContainer>
       </BannerContainer>
 
       <CategoryImageLinksContainer>
-        <CategoryImageLinks links={links} pageWidth={pageWidth} />
+        <CategoryImageLinks links={links} />
       </CategoryImageLinksContainer>
 
-      <FeaturedProducts pageWidth={pageWidth} />
+      <FeaturedProducts />
 
-      <AboutUs pageWidth={pageWidth} />
+      <AboutUs />
     </Container>
   );
 }

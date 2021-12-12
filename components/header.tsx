@@ -7,28 +7,30 @@ import Cart from "./cart";
 import ResponsiveHeader from "./responsiveHeader";
 
 interface Props {
-  cartItems: {
+  cartItems?: {
+    dateAdded: string;
     id: string;
-    date: string;
     images: {
-      image: string;
       title: string;
+      image: string;
     }[];
     inTheBox: {
-      units: string;
       title: string;
-    };
+      units: number;
+    }[];
     longDescription: string;
     price: string;
     shortDescription: string;
     title: string;
     type: string;
     cartQuantity: number;
+    cartPrice: string;
   }[];
   handleCartItemQuantityChange: (
     operation: "decrease" | "increase",
     id: string
   ) => void;
+  emptyCart: () => void;
   cartSubTotalPrice: string;
   links: {
     link: {
@@ -37,6 +39,8 @@ interface Props {
     };
     image: string;
   }[];
+  addToCartDisplayCart: boolean;
+  resetAddToCartDisplayCart: () => void;
 }
 
 const Header: React.FC<Props> = ({
@@ -44,6 +48,9 @@ const Header: React.FC<Props> = ({
   handleCartItemQuantityChange,
   cartSubTotalPrice,
   links,
+  emptyCart,
+  addToCartDisplayCart,
+  resetAddToCartDisplayCart,
 }) => {
   return (
     <Container>
@@ -83,6 +90,9 @@ const Header: React.FC<Props> = ({
           cartItems={cartItems}
           handleCartItemQuantityChange={handleCartItemQuantityChange}
           cartSubTotalPrice={cartSubTotalPrice}
+          emptyCart={emptyCart}
+          addToCartDisplayCart={addToCartDisplayCart}
+          resetAddToCartDisplayCart={resetAddToCartDisplayCart}
         />
       </Wrapper>
     </Container>
@@ -110,28 +120,37 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
-  max-width: 1109.83px;
+  max-width: 1190px;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
   z-index: 10;
+  position: relative;
   justify-content: space-between;
   border-bottom: 1px solid RGBA(255, 255, 255, 0.2);
+  box-sizing: border-box;
+  @media (max-width: 678px) {
+    padding: 0px 0px;
+  }
+  @media (max-width: 500px) {
+    max-width: 1160px;
+  }
 `;
 
 const ImageContainer = styled.button`
   width: 100%;
   max-width: 143px;
+  margin-left: 39px;
   &:focus:not(:focus-visible) {
     outline: none;
   }
-  @media (max-width: 1109.83px) {
-    margin-left: 24px;
-  }
   @media (max-width: 840px) {
     margin-left: 0px;
+    margin-right: auto;
+  }
+  @media (max-width: 640px) {
     position: absolute;
     top: 50%;
     left: 50%;

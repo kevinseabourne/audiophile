@@ -2,11 +2,21 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import ImageLoader from "./reusable/imageLoader";
 
-interface Props {
-  pageWidth: number;
-}
+interface Props {}
 
-const AboutUs: React.FC<Props> = ({ pageWidth }) => {
+const AboutUs: React.FC<Props> = () => {
+  const [pageWidth, setpageWidth] = useState(null);
+
+  useEffect(() => {
+    setpageWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize); // <-- I am only interested in window.innerWidth !
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const handleResize = () => {
+    setpageWidth(window.innerWidth);
+  };
+
   return (
     <Container>
       <TextContainer>
@@ -31,10 +41,10 @@ const AboutUs: React.FC<Props> = ({ pageWidth }) => {
             : "https://chpistel.sirv.com/audiophile/shared/desktop/image-best-gear.jpg"
         }
         maxWidth={
-          pageWidth <= 500 ? "600px" : pageWidth <= 1100 ? "100%" : "544px"
+          pageWidth <= 500 ? "600px" : pageWidth <= 1100 ? "100%" : "540px"
         }
         placeholderSize={
-          pageWidth <= 500 ? "100%" : pageWidth <= 1100 ? "320px" : "100%"
+          pageWidth <= 500 ? "100%" : pageWidth <= 1100 ? "320px" : "108.89%"
         }
         objectFit="cover"
         alt="person"
@@ -55,6 +65,8 @@ const Container = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 150px;
+  margin-left: auto;
+  margin-right: auto;
   margin-top: 200px;
   @media (max-width: 1100px) {
     flex-direction: column;
