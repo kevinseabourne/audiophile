@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import ImageLoader from "./reusable/imageLoader";
 import Logo from "../public/icons/audiophile.svg";
@@ -54,6 +55,13 @@ const Header: React.FC<Props> = ({
 }) => {
   return (
     <Container>
+      <SkipHeaderLink
+        href="#main"
+        whileFocus={{ opacity: 1, x: 260 }}
+        whileTap={{ opacity: 0, x: -260 }}
+      >
+        Skip to Content
+      </SkipHeaderLink>
       <Wrapper>
         <ResponsiveHeader
           links={links}
@@ -117,6 +125,23 @@ const Container = styled.div`
   z-index: 10;
   background-color: #191919;
   justify-content: center;
+`;
+
+const SkipHeaderLink = styled(motion.a)`
+  opacity: 0;
+  padding: 16px 24px;
+  position: absolute;
+  top: 92px;
+  left: -200px;
+  font-size: 1rem;
+  border-radius: 9px;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px -5.9px 2.7px,
+    rgba(0, 0, 0, 0.024) 0px -1.2px 6.9px, rgba(0, 0, 0, 0.03) 0px 8px 14.2px,
+    rgba(0, 0, 0, 0.04) 0px 21.9px 29.2px, rgba(0, 0, 0, 0.07) 0px 49px 80px;
+  &:focus {
+    outline: initial solid initial;
+  }
 `;
 
 const Wrapper = styled.div`
