@@ -22,6 +22,7 @@ interface Props {
       units: number;
     }[];
     longDescription: string;
+    lowerCaseTitle: string;
     price: string;
     shortDescription: string;
     title: string;
@@ -36,9 +37,7 @@ const ProductCard: React.FC<Props> = ({
   index,
   showPricingAndAddCart,
 }) => {
-  const { cartItems, handleAddToCart, resetAddToCartDisplayCart } = useContext(
-    AppContext
-  );
+  const { handleAddToCart, resetAddToCartDisplayCart } = useContext(AppContext);
   const { query, push } = useRouter();
   const { category } = query;
 
@@ -59,18 +58,19 @@ const ProductCard: React.FC<Props> = ({
     handlePriceFormat();
 
     setpageWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize); // <-- I am only interested in window.innerWidth !
+    window.addEventListener("resize", handleResize);
 
     handleNewProductTitle();
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const handleResize = () => {
+    // used to render different images for different screen sizes
     setpageWidth(window.innerWidth);
   };
 
   const handleNewProductTitle = () => {
-    // Any product that is less than 1 year old (365 days) displays the 'New Label'
+    // Any product that is less than 1 year old (365 days) displays 'New Product'
     // comparing the currect date with the product date resulting with the difference in days
     const { dateAdded } = product;
     const productDate = new Date(dateAdded);
@@ -106,9 +106,10 @@ const ProductCard: React.FC<Props> = ({
 
   const handleProductLink = () => {
     // ------------------------ Comment ------------------------ //
-    // product titles are using a symbol '|' for the number 1 instead of I in romanNumerals
-    // in order to convert the roman numeral to a number. I convert any charater with the '|' symbolto a number.
+    // product titles are using a roman numerals these don't work in url as a slug
+    // in order to convert the roman numeral to a number. I convert any charater with the '|' symbol to a number.
     // I then extract the roman numeral from the string and pass it to the romanNumeralConvertor function which return it as a number
+    // if a product title has a roman numeral, the number will be shown when you have over the title
     const { title } = { ...product };
 
     const characterReplaced = title.replace(/[|]/g, "I");
@@ -178,18 +179,16 @@ const ProductCard: React.FC<Props> = ({
   };
 
   return (
-    <Product>
+    <Product index={index}>
       <ImageContainer index={index}>
         <ImageLoader
           src={displayImage}
-          maxWidth={pageWidth <= 768 ? "100%" : "100%"}
+          maxWidth="760px"
           alt="headphones"
           objectFit="cover"
           priority={true}
           objectPosition="center"
-          placeholderSize={
-            pageWidth <= 980 ? (pageWidth <= 500 ? "320px" : "480px") : "560px"
-          }
+          placeholderSize={pageWidth <= 880 ? "445px" : "100%"}
           placeholderColor="#F1F1F1"
           onClick={() => push(`/products/${category}/${productQuery}`)}
           hover={true}
@@ -207,9 +206,15 @@ const ProductCard: React.FC<Props> = ({
           productLifeInDays={productLifeInDays}
         >
           <ProductTitle>{product.title}</ProductTitle>
-          <ToolTip variants={toolTipAnimation}>
-            {productTitleWithNumber}
-          </ToolTip>
+          {productTitleWithNumber && (
+            <ToolTip
+              variants={toolTipAnimation}
+              tabIndex={0}
+              whileFocus={{ opacity: 1, y: 0, scale: 1 }}
+            >
+              {productTitleWithNumber}
+            </ToolTip>
+          )}
         </ProductTitleContainer>
         <LongDescription showPricingAndAddCart={showPricingAndAddCart}>
           {product.shortDescription}
@@ -223,6 +228,8 @@ const ProductCard: React.FC<Props> = ({
             hoverBackgroundColor="#FBAF85"
             width="160px"
             height="48px"
+            mediaQuery="350px"
+            responsiveFullWidth={true}
           />
         )}
         {showPricingAndAddCart && <Price>{`${price}`}</Price>}
@@ -258,11 +265,14 @@ const ProductCard: React.FC<Props> = ({
 
 export default ProductCard;
 
-const Product = styled.div`
+interface ProductProps {
+  index: number;
+}
+
+const Product = styled.div<ProductProps>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  box-sizing: border-box;
   @media (max-width: 630px) {
     flex-direction: column;
   }
@@ -314,6 +324,7 @@ const InfoContainer = styled.div<InfoContainerProps>`
     max-width: 100%;
     margin-left: 0px;
     margin-right: 0px;
+    order: ${({ index }) => (index % 2 === 0 ? 2 : 1)};
     margin-top: ${({ productLifeInDays }) =>
       productLifeInDays <= 365 ? "32px" : "40px"};
   }
@@ -331,7 +342,7 @@ const NewProductTitle = styled.span`
   }
 `;
 
-const ToolTip = styled(motion.span)`
+const ToolTip = styled(motion.div)`
   position: absolute;
   background-color: ${({ theme }) => theme.colors.silver};
   color: ${({ theme }) => theme.colors.darkerBlack};
@@ -342,7 +353,9 @@ const ToolTip = styled(motion.span)`
   border-radius: 6px;
   bottom: -32px;
   left: 50px;
-  z-index: -1;
+  &:focus {
+    outline: 1px solid green;
+  }
   &::after {
     content: "";
     position: absolute;

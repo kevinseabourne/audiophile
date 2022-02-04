@@ -13,7 +13,7 @@ const FeaturedProducts: React.FC<Props> = () => {
 
   useEffect(() => {
     setpageWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize); // <-- I am only interested in window.innerWidth !
+    window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -135,7 +135,7 @@ const FeaturedProducts: React.FC<Props> = () => {
             <ProductTwoThreeTitle>YX1 Earphones</ProductTwoThreeTitle>
             <Button
               title="See Product"
-              onClick={() => push("/products/speakers/yx1-earphones")}
+              onClick={() => push("/products/speakers/yx1-wireless-earphones")}
               color="#000000"
               backgroundColor="transparent"
               hoverBackgroundColor="#000000"
