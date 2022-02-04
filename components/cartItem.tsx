@@ -36,6 +36,7 @@ const CartItem: React.FC<Props> = ({
   handleCartItemQuantityChange,
 }) => {
   const [cartItemPrice, setCartItemPrice] = useState("");
+
   useEffect(() => {
     handlePriceFormat();
   }, []);

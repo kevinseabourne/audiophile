@@ -1,11 +1,16 @@
 import React from "react";
 import styled from "styled-components";
 import { FieldError } from "react-hook-form/dist/types";
+import { formatPrice } from "../../lib/utils/formatPrice";
 
 interface Props {
   label: string;
   height?: string;
   value: string;
+  message?: string;
+  name: string;
+  price?: string;
+  register?: (name: string) => void;
   error?: { message: string } | FieldError;
   maxLength?: number;
   onChange?: (e: Event) => void;
@@ -25,60 +30,69 @@ interface Props {
   opacity?: number;
   checked?: boolean;
   defaultChecked?: boolean;
+  mediaQuery?: string;
+  responsive?: boolean;
 }
 
-export const RadioButton = React.forwardRef<HTMLInputElement, Props>(
-  (
-    {
-      height,
-      label,
-      error,
-      maxLength,
-      onChange,
-      onClick,
-      type,
-      doSubmit,
-      value,
-      maxWidth,
-      marginLeft,
-      autoFocus,
-      marginRight,
-      marginTop,
-      marginBottom,
-      defaultValue,
-      y,
-      x,
-      scale,
-      opacity,
-      checked,
-      defaultChecked,
-      ...rest
-    },
-    ref
-  ) => {
-    return (
-      <Container
-        height={height}
-        maxWidth={maxWidth}
-        marginTop={marginTop}
-        marginBottom={marginBottom}
-        marginLeft={marginLeft}
-        marginRight={marginRight}
-      >
-        <RadioContainer>
-          <Radio
-            type="radio"
-            {...rest}
-            ref={ref}
-            value={value}
-            defaultChecked={defaultChecked}
-          />
-        </RadioContainer>
+export const RadioButton = ({
+  height,
+  label,
+  name,
+  error,
+  maxLength,
+  onChange,
+  onClick,
+  type,
+  doSubmit,
+  value,
+  message,
+  price,
+  maxWidth,
+  marginLeft,
+  autoFocus,
+  marginRight,
+  marginTop,
+  marginBottom,
+  defaultValue,
+  y,
+  x,
+  register,
+  scale,
+  opacity,
+  checked,
+  defaultChecked,
+  mediaQuery,
+  responsive,
+  ...rest
+}: Props) => {
+  return (
+    <Container
+      height={height}
+      maxWidth={maxWidth}
+      marginTop={marginTop}
+      marginBottom={marginBottom}
+      marginLeft={marginLeft}
+      marginRight={marginRight}
+      mediaQuery={mediaQuery}
+      responsive={responsive}
+    >
+      <RadioContainer>
+        <Radio
+          type="radio"
+          {...rest}
+          {...register(name)}
+          defaultChecked={defaultChecked}
+          value={value}
+        />
+      </RadioContainer>
+      <TitleMessageContainer>
         <Label>{label}</Label>
-      </Container>
-    );
-  }
-);
+        {message && <Message>{message}</Message>}
+      </TitleMessageContainer>
+      {price && <Price>{formatPrice(price)}</Price>}
+    </Container>
+  );
+};
 
 interface ContainerProps {
   height: string;
@@ -87,6 +101,8 @@ interface ContainerProps {
   marginBottom: string;
   marginLeft: string;
   marginRight: string;
+  mediaQuery: string;
+  responsive: boolean;
 }
 
 const Container = styled.div<ContainerProps>`
@@ -109,6 +125,11 @@ const Container = styled.div<ContainerProps>`
   @media (max-width: 609px) {
     margin-left: 0px;
     margin-right: 0px;
+  }
+  @media ${({ mediaQuery }) => `(max-width: ${mediaQuery})`} {
+    max-width: ${({ responsive, maxWidth }) =>
+      responsive ? "100%" : maxWidth};
+    height: 100%;
   }
 `;
 
@@ -167,6 +188,11 @@ const Radio = styled.input`
   }
 `;
 
+const TitleMessageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 const Label = styled.label`
   color: ${({ theme }) => theme.colors.darkerBlack};
   font-weight: 700;
@@ -174,4 +200,42 @@ const Label = styled.label`
   line-height: 19px;
   letter-spacing: -0.25px;
   margin-left: 16px;
+  @media (max-width: 380px) {
+    font-size: 12px;
+  }
+  @media (max-width: 280px) {
+    font-size: 11px;
+  }
+`;
+
+const Message = styled.p`
+  color: ${({ theme }) => theme.colors.darkerBlack};
+  font-weight: 400;
+  opacity: 0.5;
+  font-size: 12px;
+  line-height: 19px;
+  letter-spacing: -0.25px;
+  margin: 0px;
+  margin-left: 16px;
+  @media (max-width: 380px) {
+    font-size: 10px;
+  }
+  @media (max-width: 280px) {
+    font-size: 9px;
+  }
+`;
+
+const Price = styled.label`
+  color: ${({ theme }) => theme.colors.darkerBlack};
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 19px;
+  letter-spacing: -0.25px;
+  margin-left: auto;
+  @media (max-width: 380px) {
+    font-size: 12px;
+  }
+  @media (max-width: 280px) {
+    font-size: 11px;
+  }
 `;

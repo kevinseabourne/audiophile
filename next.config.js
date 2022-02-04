@@ -1,10 +1,7 @@
 module.exports = {
-  experimental: {
-    styledComponents: true,
-  },
   // add more font or image formats if importing them to here.
   images: {
-    domains: ["chpistel.sirv.com"],
+    domains: ["chpistel.sirv.com", "cdn.shopify.com"],
   },
   webpack: (config) => {
     config.module.rules.push({

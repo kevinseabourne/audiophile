@@ -7,7 +7,6 @@ import Button from "../components/reusable/button";
 import CategoryImageLinks from "../components/categoryImageLinks";
 import FeaturedProducts from "../components/featuredProducts";
 import AboutUs from "../components/aboutUs";
-import { getAllProducts } from "./api/products";
 
 export default function Home() {
   const { links } = useContext(AppContext);
@@ -16,13 +15,8 @@ export default function Home() {
   const [pageWidth, setpageWidth] = useState(null);
 
   useEffect(() => {
-    async function fetchData() {
-      const data = await getAllProducts();
-      console.log(data);
-    }
-    fetchData();
     setpageWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize); // <-- I am only interested in window.innerWidth !
+    window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 

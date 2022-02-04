@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 interface Props {
   title: string;
-  onClick: () => void;
+  onClick?: () => void;
   height: string;
   width: string;
   backgroundColor: string;

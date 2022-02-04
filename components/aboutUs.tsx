@@ -9,7 +9,7 @@ const AboutUs: React.FC<Props> = () => {
 
   useEffect(() => {
     setpageWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize); // <-- I am only interested in window.innerWidth !
+    window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 

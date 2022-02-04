@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
@@ -17,6 +18,7 @@ interface Props {
 }
 
 const Footer: React.FC<Props> = ({ links }) => {
+  const { push } = useRouter();
   const [socials] = useState([
     {
       title: "facebook",
@@ -35,23 +37,33 @@ const Footer: React.FC<Props> = ({ links }) => {
     },
   ]);
 
+  const currentYear = new Date().getFullYear();
+
   return (
     <Container>
       <Wrapper>
         <OrangeTopLine />
         <TitleLinksContianer>
-          <ImageLoader
-            src="https://chpistel.sirv.com/audiophile/shared/desktop/logo.svg"
-            alt="audiophile"
-            maxWidth="143px"
-            placeholderSize="25px"
-            priority={true}
-            centerImage={true}
-            hover={true}
-          />
+          <ImageContainer onClick={() => push("/")}>
+            <ImageLoader
+              src="https://chpistel.sirv.com/audiophile/shared/desktop/logo.svg"
+              alt="audiophile"
+              maxWidth="143px"
+              placeholderSize="25px"
+              priority={true}
+              centerImage={true}
+              hover={true}
+            />
+          </ImageContainer>
           <LinksContainer>
             {links.map((link) => (
-              <Link href={link.link.route} key={link.link.title}>
+              <Link
+                href={link.link.route === "/" ? "/" : `/products/[id]`}
+                as={
+                  link.link.route === "/" ? "/" : `/products${link.link.route}`
+                }
+                key={link.link.title}
+              >
                 <LinkTitle>{link.link.title}</LinkTitle>
               </Link>
             ))}
@@ -64,13 +76,11 @@ const Footer: React.FC<Props> = ({ links }) => {
           demo facility - we’re open 7 days a week.
         </Description>
         <CopyRightSocialsContainer>
-          <CopyRight>
-            Copyright {new Date().getFullYear()}. All Rights Reserved
-          </CopyRight>
+          <CopyRight>Copyright {currentYear}. All Rights Reserved</CopyRight>
 
           <SocialsContainer>
             {socials.map((social) => (
-              <ImageHoverFilter key={social.title}>
+              <ImageHoverFilter key={social.title} tabIndex={0}>
                 <ImageLoader
                   marginLeft={social.title === "twitter" ? "16px" : "0px"}
                   marginRight={social.title === "twitter" ? "16px" : "0px"}
@@ -163,6 +173,13 @@ const TitleLinksContianer = styled.div`
   }
 `;
 
+const ImageContainer = styled.button`
+  width: 143px;
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
+`;
+
 const Description = styled.p`
   font-weight: 200;
   opacity: 0.5;
@@ -252,6 +269,10 @@ const ImageHoverFilter = styled.div`
     brightness(105%) contrast(100%);
   transition: all 0.25s;
   &:hover {
+    filter: invert(61%) sepia(24%) saturate(1146%) hue-rotate(336deg)
+      brightness(89%) contrast(90%);
+  }
+  &:focus {
     filter: invert(61%) sepia(24%) saturate(1146%) hue-rotate(336deg)
       brightness(89%) contrast(90%);
   }

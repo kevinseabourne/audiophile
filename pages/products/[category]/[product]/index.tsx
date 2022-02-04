@@ -1,5 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from "next";
-import React, { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import React, { useEffect, useContext } from "react";
 import AppContext from "../../../../context/appContext";
 import styled from "styled-components";
 import ProductGallery from "../../../../components/productGallery";
@@ -9,39 +10,55 @@ import AboutUs from "../../../../components/aboutUs";
 import ProductCard from "../../../../components/productCard";
 import { getSingleProduct, getAllProductTitles } from "../../../api/products";
 import { isArrayEmpty } from "../../../../lib/utils/isEmpty";
+import { toast } from "react-toastify";
+
+type ProductObj = {
+  id: string;
+  date: string;
+  images: {
+    image: string;
+    title: string;
+  }[];
+  inTheBox: {
+    units: string;
+    title: string;
+  };
+  longDescription: string;
+  price: string;
+  shortDescription: string;
+  title: string;
+  lowerCaseTitle: string;
+  type: string;
+  cartQuantity: number;
+};
 
 interface Props {
-  data: {
-    id: string;
-    date: string;
-    images: {
-      image: string;
-      title: string;
-    }[];
-    inTheBox: {
-      units: string;
-      title: string;
-    };
-    longDescription: string;
-    price: string;
-    shortDescription: string;
-    title: string;
-    lowerCaseTitle: string;
-    type: string;
-    cartQuantity: number;
-  };
+  data: ProductObj;
 }
 
 const ProductPage: React.FC<Props> = ({ data }) => {
+  const { back } = useRouter();
   const { links } = useContext(AppContext);
 
   useEffect(() => {
-    console.log(data[0]);
+    if (!isArrayEmpty(data)) {
+      toast.error("An unexpected error has occurred", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
   }, []);
 
   return (
     <Container>
-      <Return>Go Back</Return>
+      <Return onClick={() => back()} tabIndex={0}>
+        Go Back
+      </Return>
       <ProductCard showPricingAndAddCart={true} product={data[0]} />
       <MoreProductInfo>
         <FeaturesContainer>
@@ -103,23 +120,28 @@ export default ProductPage;
 
 const Container = styled.div``;
 
-const Return = styled.div`
+const Return = styled.button`
   margin-top: 79px;
   margin-bottom: 56px;
   margin-right: auto;
   font-weight: 200;
+  width: 57px;
   opacity: 0.5;
   color: ${({ theme }) => theme.colors.darkerBlack};
+  &:hover {
+    cursor: pointer;
+  }
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
   @media (max-width: 980px) {
     margin-top: 33px;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }
   @media (max-width: 630px) {
     margin-top: 16px;
   }
 `;
-
-const ItemContainer = styled.div``;
 
 const FeaturesContainer = styled.div`
   display: flex;

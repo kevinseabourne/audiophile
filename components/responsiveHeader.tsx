@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
 import CategoryImageLinks from "./categoryImageLinks";
 
 interface Props {
@@ -38,24 +37,16 @@ interface Props {
   cartSubTotalPrice: string;
 }
 
-const ResponsiveHeader: React.FC<Props> = ({
-  links,
-  cartItems,
-  handleCartItemQuantityChange,
-  cartSubTotalPrice,
-}) => {
+const ResponsiveHeader: React.FC<Props> = ({ links }) => {
   const overlayRef = useRef(null);
   const contentRef = useRef(null);
   const burgerRef = useRef(null);
-  const [renderMenu, setRenderMenu] = useState(false);
+
   const [burgerOpen, setBurgerOpen] = useState(false);
 
   useEffect(() => {
-    window.innerWidth <= 840 && setRenderMenu(true);
-    window.addEventListener("resize", handleWindowResize);
     window.addEventListener("mousedown", handleClickOutside);
     return () => {
-      window.removeEventListener("resize", handleWindowResize);
       window.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
@@ -67,26 +58,9 @@ const ResponsiveHeader: React.FC<Props> = ({
   }, [burgerOpen]);
 
   const handleClickOutside = (e: any) => {
-    if (
-      contentRef.current &&
-      !contentRef.current.contains(e.target) &&
-      !burgerRef.current.contains(e.target)
-    ) {
+    if (overlayRef.current === e.target) {
       closeBurgerMenu();
     }
-  };
-
-  const handleWindowResize = () => {
-    if (window.innerWidth <= 840) {
-      setRenderMenu(true);
-    } else {
-      setRenderMenu(false);
-    }
-  };
-
-  const onClick = () => {
-    contentRef.current.scrollTop = 0;
-    toggleBurgerMenu();
   };
 
   const toggleBurgerMenu = () => {
@@ -96,6 +70,12 @@ const ResponsiveHeader: React.FC<Props> = ({
   const closeBurgerMenu = () => {
     setBurgerOpen(false);
   };
+
+  useEffect(() => {
+    if (burgerOpen) {
+      contentRef.current.scrollTop = 0;
+    }
+  }, [burgerOpen]);
 
   const responsiveHeaderAnimation = {
     hidden: {
@@ -137,7 +117,7 @@ const ResponsiveHeader: React.FC<Props> = ({
     <Container>
       <Burger
         ref={burgerRef}
-        onClick={onClick}
+        onClick={toggleBurgerMenu}
         id="burgerOpen"
         aria-label={burgerOpen ? "close Menu" : "menu"}
       >
@@ -147,18 +127,23 @@ const ResponsiveHeader: React.FC<Props> = ({
       <GlobalStyle burgerOpen={burgerOpen} />
 
       <AnimatePresence>
-        <Content
-          ref={contentRef}
-          variants={responsiveHeaderAnimation}
-          initial="hidden"
-          animate={burgerOpen ? "show" : "hidden"}
-          exit="hidden"
-          aria-label="burger menu"
-        >
-          <PaddingContainer>
-            <CategoryImageLinks links={links} />
-          </PaddingContainer>
-        </Content>
+        {burgerOpen && (
+          <Content
+            ref={contentRef}
+            variants={responsiveHeaderAnimation}
+            initial="hidden"
+            animate={burgerOpen ? "show" : "hidden"}
+            exit="hidden"
+            aria-label="burger menu"
+          >
+            <PaddingContainer>
+              <CategoryImageLinks
+                links={links}
+                closeBurgerMenu={closeBurgerMenu}
+              />
+            </PaddingContainer>
+          </Content>
+        )}
       </AnimatePresence>
       <AnimatePresence>
         {burgerOpen && (
@@ -213,7 +198,7 @@ const Burger = styled.button`
   box-sizing: inherit;
   border: none;
   &:focus:not(:focus-visible) {
-    outline: none;
+    ${"" /* outline: none; */}
   }
   &:hover {
     cursor: pointer;
@@ -285,6 +270,7 @@ const Content = styled(motion.nav)`
   margin-top: 93px;
   display: flex;
   z-index: 12;
+  max-height: 284px;
   box-sizing: border-box;
   flex-direction: column;
   align-items: flex-start;
@@ -292,15 +278,21 @@ const Content = styled(motion.nav)`
   position: fixed;
   width: 100%;
   overflow: scroll;
+  @media (max-width: 678px) {
+    max-height: 750px;
+  }
 `;
 
 const PaddingContainer = styled(motion.div)`
   width: 100%;
-  max-height: 750px;
+  max-height: 284px;
   box-sizing: border-box;
   padding: 32px 24px 35px 24px;
   margin-bottom: 93px;
   background-color: ${({ theme }) => theme.colors.white};
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
+  @media (max-width: 678px) {
+    max-height: 750px;
+  }
 `;

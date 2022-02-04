@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import ImageLoader from "./imageLoader";
 import { motion, AnimatePresence } from "framer-motion";
 import { FieldError } from "react-hook-form/dist/types";
 
@@ -26,6 +25,8 @@ interface Props {
   x?: number;
   scale?: number;
   opacity?: number;
+  mediaQuery?: string;
+  responsive?: boolean;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, Props>(
@@ -52,6 +53,8 @@ export const Input = React.forwardRef<HTMLInputElement, Props>(
       x,
       scale,
       opacity,
+      mediaQuery,
+      responsive,
       ...rest
     },
     ref
@@ -96,6 +99,8 @@ export const Input = React.forwardRef<HTMLInputElement, Props>(
         marginRight={marginRight}
         tabIndex={tabIndex}
         variants={animation}
+        mediaQuery={mediaQuery}
+        responsive={responsive}
       >
         <LabelErrorMessageContainer>
           <Label error={error}>{label}</Label>
@@ -140,6 +145,8 @@ interface ContainerProps {
   marginBottom: string;
   marginLeft: string;
   marginRight: string;
+  mediaQuery: string;
+  responsive: boolean;
 }
 
 const Container = styled(motion.div)<ContainerProps>`
@@ -154,6 +161,15 @@ const Container = styled(motion.div)<ContainerProps>`
   @media (max-width: 609px) {
     margin-left: 0px;
     margin-right: 0px;
+  }
+  @media (max-width: 600px) {
+    margin-top: ${({ responsive }) => (responsive ? "20px" : "0px")};
+  }
+  @media ${({ mediaQuery }) => `(max-width: ${mediaQuery})`} {
+    max-width: ${({ responsive, maxWidth }) =>
+      responsive ? "100%" : maxWidth};
+    margin-top: 0px;
+    margin-bottom: 20px;
   }
 `;
 

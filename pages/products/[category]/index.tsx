@@ -5,15 +5,14 @@ import AppContext from "../../../context/appContext";
 import styled from "styled-components";
 import CategoryImageLinks from "../../../components/categoryImageLinks";
 import AboutUs from "../../../components/aboutUs";
-import ImageLoader from "../../../components/reusable/imageLoader";
-import Button from "../../../components/reusable/button";
 import ProductCard from "../../../components/productCard";
 import { getCategoryProducts } from "../../api/products";
 import { isArrayEmpty } from "../../../lib/utils/isEmpty";
+import { toast } from "react-toastify";
 
 interface Props {
   data: {
-    productAdded: string;
+    dateAdded: string;
     id: string;
     images: {
       title: string;
@@ -40,7 +39,19 @@ const ProductsPage: React.FC<Props> = ({ data }) => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    data && setProducts(data);
+    if (isArrayEmpty(data)) {
+      setProducts(data);
+    } else {
+      toast.error("An unexpected error has occurred", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
   }, []);
 
   return (
@@ -106,16 +117,41 @@ const Banner = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  @media (max-width: 550px) {
+    height: 230px;
+  }
+  @media (max-width: 430px) {
+    height: 190px;
+  }
 `;
 
-const ProductCategory = styled.h2``;
+const ProductCategory = styled.h2`
+  @media (max-width: 550px) {
+    font-size: 28px;
+  }
+  @media (max-width: 430px) {
+    font-size: 23px;
+  }
+`;
 
 const ProductsContainer = styled.div`
   margin-top: 399px;
   display: grid;
-  grid-template-columns: repeat(1, 1110px);
+  grid-template-columns: repeat(1, 1fr);
   grid-column-end: auto;
   grid-gap: 160px 0px;
-  max-width: 560px;
   margin-bottom: 160px;
+  @media (max-width: 630px) {
+    margin-top: 266px;
+    grid-gap: 90px 0px;
+  }
+  @media (max-width: 550px) {
+    margin-top: 160px;
+  }
+  @media (max-width: 480px) {
+    grid-gap: 60px 0px;
+  }
+  @media (max-width: 430px) {
+    margin-top: 120px;
+  }
 `;

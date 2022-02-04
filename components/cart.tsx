@@ -60,14 +60,19 @@ const Cart: React.FC<Props> = ({
   }, []);
 
   useEffect(() => {
-    // decided to keep cartOpen state in the cart component. Instead of moving it and it's functions to the app component.
+    cartOpen && cartRef.current.focus();
+  }, [cartOpen]);
+
+  useEffect(() => {
     if (addToCartDisplayCart) {
+      // when an item is added to cart, display the cart
       setCartOpen(true);
       resetAddToCartDisplayCart();
     }
   }, [addToCartDisplayCart]);
 
   const handleClickOutside = (e: any) => {
+    // close the cart when you click outside the cart
     if (
       cartRef.current &&
       !cartRef.current.contains(e.target) &&
@@ -142,6 +147,7 @@ const Cart: React.FC<Props> = ({
             <CartDropdownContainer>
               <CartDropdown
                 ref={cartRef}
+                tabIndex={0}
                 variants={cartDropdownAnimation}
                 initial="hidden"
                 animate={cartOpen ? "show" : "hidden"}

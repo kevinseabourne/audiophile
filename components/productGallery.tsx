@@ -3,7 +3,7 @@ import styled from "styled-components";
 import ImageLoader from "./reusable/imageLoader";
 
 interface Props {
-  images: [{ image: string; title: string }];
+  images: { image: string; title: string }[];
 }
 
 const ProductGallery: React.FC<Props> = ({ images }) => {

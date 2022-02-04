@@ -98,8 +98,4 @@ const Spinner = styled.svg<SpinnerProps>`
       transform: rotate(450deg);
     }
   }
-  ${"" /* @media (max-width: 600px) {
-    width: 70px;
-    height: 70px;
-  } */}
 `;

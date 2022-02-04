@@ -17,7 +17,8 @@ interface Props {
   objectPosition?: string;
   duration?: string;
   boxShadow?: string;
-  loadingSpinner?: boolean; // true or false to show a loading spinner when the image is still loading
+  loadingSpinner?: boolean;
+  tabIndex?: boolean;
   priority?: boolean;
   centerImage?: boolean;
   contentLoaded?: boolean;
@@ -49,7 +50,8 @@ const ImageLoader: FC<Props> = ({
   objectPosition,
   duration,
   boxShadow,
-  loadingSpinner,
+  // loadingSpinner,
+  tabIndex,
   priority,
   centerImage,
   contentLoaded,
@@ -67,7 +69,7 @@ const ImageLoader: FC<Props> = ({
   delay,
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const loadingSpinnerRef = useRef(null);
+  // const loadingSpinnerRef = useRef(null);
   const isMounted = useRef(null);
 
   useEffect(() => {
@@ -110,6 +112,7 @@ const ImageLoader: FC<Props> = ({
 
   return (
     <Container
+      tabIndex={tabIndex ? 0 : -1}
       maxWidth={maxWidth}
       width={width}
       boxShadow={boxShadow}
@@ -135,7 +138,6 @@ const ImageLoader: FC<Props> = ({
         <Placeholder
           layout
           borderRadius={borderRadius}
-          onClick={onClick}
           contentLoaded={contentLoaded}
           zIndex={zIndex}
           placeholderSize={placeholderSize}
@@ -157,9 +159,6 @@ const ImageLoader: FC<Props> = ({
             layout="fill"
             priority={priority ? true : false}
             className="image"
-            // variants={animation}
-            // initial="hidden"
-            // animate={isLoaded ? "show" : "hidden"}
           />
         )}
       </ImageContainer>
@@ -200,6 +199,9 @@ const Container = styled.div<ContainerProps>`
   .image {
     border-radius: ${({ borderRadius }) =>
       borderRadius ? borderRadius : "0px"};
+  }
+  &:focus:not(:focus-visible) {
+    outline: none;
   }
 `;
 
@@ -245,11 +247,4 @@ const Placeholder = styled(motion.div)<PlaceholderProps>`
     placeholderColor ? placeholderColor : "transparent"};
   border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : "0px")};
   box-sizing: border-box;
-`;
-
-const ImageAnimation = styled(motion.div)`
-  position: relative;
-  width: 100%;
-  max-width: 143px;
-  height: 40px;
 `;

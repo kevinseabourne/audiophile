@@ -4,34 +4,31 @@ import styled from "styled-components";
 import ArrowIcon from ".././public/icons/arrow.svg";
 import ImageLoader from "./reusable/imageLoader";
 
+type LinkObj = {
+  link: {
+    title: string;
+    route: string;
+  };
+  image: string;
+};
+
 interface Props {
-  links: {
-    link: {
-      title: string;
-      route: string;
-    };
-    image: string;
-  }[];
+  links: LinkObj[];
+  closeBurgerMenu?: () => void;
 }
 
-const CategoryImageLinks: React.FC<Props> = ({ links }) => {
+const CategoryImageLinks: React.FC<Props> = ({ links, closeBurgerMenu }) => {
   const { push } = useRouter();
   const [productLinks, setProductLinks] = useState([]);
-  const [pageWidth, setpageWidth] = useState(null);
-
-  useEffect(() => {
-    setpageWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize); // <-- I am only interested in window.innerWidth !
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   useEffect(() => {
     const filteredLinks = links.filter((link) => link.link.title !== "Home");
     setProductLinks(filteredLinks);
   }, [links]);
 
-  const handleResize = () => {
-    setpageWidth(window.innerWidth);
+  const handleClick = (link: LinkObj) => {
+    closeBurgerMenu && closeBurgerMenu();
+    push(`/products/[id]`, `/products${link.link.route}`);
   };
 
   return (
@@ -39,9 +36,10 @@ const CategoryImageLinks: React.FC<Props> = ({ links }) => {
       {productLinks.map((link) => (
         <ItemContainer
           key={link.link.title}
-          onClick={() => push(`/products${link.link.route}`)}
+          onClick={() => handleClick(link)}
+          closeBurgerMenu={closeBurgerMenu}
         >
-          <ImageContainer>
+          <ImageContainer closeBurgerMenu={closeBurgerMenu}>
             <ImageLoader
               src={link.image}
               alt="product"
@@ -92,13 +90,17 @@ const ShopButtonTitle = styled.span`
   color: ${({ theme }) => theme.colors.darkerBlack};
 `;
 
-const ItemContainer = styled.div`
+interface ItemContainerProps {
+  closeBurgerMenu: () => void;
+}
+
+const ItemContainer = styled.div<ItemContainerProps>`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
-  height: 276.5px;
+  height: ${({ closeBurgerMenu }) => (closeBurgerMenu ? "217px" : "276.5px")};
   &:hover {
     cursor: pointer;
     ${ShopButtonTitle} {
@@ -110,14 +112,19 @@ const ItemContainer = styled.div`
   }
 `;
 
-const ImageContainer = styled.div`
+interface ImageContainerProps {
+  closeBurgerMenu: () => void;
+}
+
+const ImageContainer = styled.div<ImageContainerProps>`
   position: absolute;
   width: 100%;
   max-width: 207px;
   top: -7px;
   @media (max-width: 1040px) {
-    top: 55px;
-    max-width: 150px;
+    top: ${({ closeBurgerMenu }) => (closeBurgerMenu ? "-7px" : "55px")};
+    max-width: ${({ closeBurgerMenu }) =>
+      closeBurgerMenu ? "154px" : "150px"}; 150px;
   }
   @media (max-width: 750px) {
     top: -7px;

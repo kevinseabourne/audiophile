@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import ImageLoader from "./reusable/imageLoader";
-import QuantityButton from "./reusable/quantityButton";
 import { formatPrice } from "../lib/utils/formatPrice";
 
 interface Props {
@@ -28,6 +27,7 @@ interface Props {
 
 const CheckoutCartItem: React.FC<Props> = ({ cartItem }) => {
   const [cartItemPrice, setCartItemPrice] = useState("");
+
   useEffect(() => {
     handlePriceFormat();
   }, []);
@@ -54,7 +54,14 @@ const CheckoutCartItem: React.FC<Props> = ({ cartItem }) => {
           <Price>{cartItemPrice}</Price>
         </TitlePriceContainer>
       </ImageAndTitleContainer>
-      <Quantity>{cartItem.cartQuantity}</Quantity>
+      <Quantity>x{cartItem.cartQuantity}</Quantity>
+      <ResponsiveContainer>
+        <TitlePriceContainer responsive={true}>
+          <Title>{cartItem.title}</Title>
+          <Price>{cartItemPrice}</Price>
+        </TitlePriceContainer>
+        <Quantity responsive={true}>x{cartItem.cartQuantity}</Quantity>
+      </ResponsiveContainer>
     </Container>
   );
 };
@@ -69,7 +76,7 @@ const Container = styled.div`
   @media (max-width: 390px) {
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
   }
 `;
 
@@ -81,15 +88,26 @@ const ImageAndTitleContainer = styled.div`
   }
 `;
 
-const TitlePriceContainer = styled.div`
+interface TitlePriceContainerProps {
+  responsive?: boolean;
+}
+
+const TitlePriceContainer = styled.div<TitlePriceContainerProps>`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   max-width: 120px;
-  margin-left: 16px;
+  margin-left: ${({ responsive }) => (responsive ? "0px" : "16px")};
   margin-right: auto;
-  @media (max-width: 840px) {
-    max-width: 90px;
+  @media (max-width: 1200px) {
+    max-width: 100%;
+  }
+  @media (max-width: 447px) {
+    max-width: 120px;
+  }
+
+  @media (max-width: 394px) {
+    display: ${({ responsive }) => (responsive ? "flex" : "none")};
   }
 `;
 
@@ -113,7 +131,36 @@ const Price = styled.span`
   overflow: hidden;
 `;
 
-const Quantity = styled.span`
-  font-weight: 700;
+interface QuantityProps {
+  responsive?: boolean;
+}
+
+const Quantity = styled.span<QuantityProps>`
+  color: ${({ theme }) => theme.colors.darkerBlack};
+  opacity: 0.5;
+  align-self: flex-start;
   font-size: 14px;
+  font-weight: 700;
+  @media (max-width: 394px) {
+    margin-top: -70px;
+    display: ${({ responsive }) => (responsive ? "flex" : "none")};
+  }
+  @media (max-width: 230px) {
+    margin-top: 0px;
+    display: ${({ responsive }) => (responsive ? "flex" : "none")};
+  }
+`;
+
+const ResponsiveContainer = styled.div`
+  display: none;
+  width: 100%;
+  @media (max-width: 394px) {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  @media (max-width: 230px) {
+    display: flex;
+    flex-direction: column;
+  }
 `;
