@@ -9,25 +9,28 @@ import QuantityButton from "./reusable/quantityButton";
 import { romanNumeralConvertor } from "../lib/utils/romanNumeralConvertor";
 import { formatPrice } from "../lib/utils/formatPrice";
 
-interface Props {
-  product: {
-    dateAdded: string;
-    id: string;
-    images: {
-      title: string;
-      image: string;
-    }[];
-    inTheBox: {
-      title: string;
-      units: number;
-    }[];
-    longDescription: string;
-    lowerCaseTitle: string;
-    price: string;
-    shortDescription: string;
+type Product = {
+  dateAdded: string;
+  id: string;
+  images: {
     title: string;
-    type: string;
-  };
+    image: string;
+  }[];
+  inTheBox: {
+    title: string;
+    units: number;
+  }[];
+  longDescription: string;
+  lowerCaseTitle: string;
+  price: string;
+  shortDescription: string;
+  title: string;
+  type: string;
+  cartQuantity: number;
+};
+
+interface Props {
+  product: Product;
   index?: number;
   showPricingAndAddCart?: boolean;
 }
@@ -38,8 +41,7 @@ const ProductCard: React.FC<Props> = ({
   showPricingAndAddCart,
 }) => {
   const { handleAddToCart, resetAddToCartDisplayCart } = useContext(AppContext);
-  const { query, push } = useRouter();
-  const { category } = query;
+  const { push } = useRouter();
 
   const [displayImage, setDisplayImage] = useState("");
   const [productQuery, setProductQuery] = useState("");
@@ -144,7 +146,7 @@ const ProductCard: React.FC<Props> = ({
   const handleProductUrlQuery = () => {};
 
   const addQuantityToProduct = () => {
-    const productClone: any = { ...product };
+    const productClone: Product = { ...product };
     productClone.cartQuantity = productQuantity;
     handleAddToCart(productClone);
 
@@ -190,8 +192,12 @@ const ProductCard: React.FC<Props> = ({
           objectPosition="center"
           placeholderSize={pageWidth <= 880 ? "445px" : "100%"}
           placeholderColor="#F1F1F1"
-          onClick={() => push(`/products/${category}/${productQuery}`)}
-          hover={true}
+          onClick={
+            showPricingAndAddCart
+              ? null
+              : () => push(`/products/${product.type}/${productQuery}`)
+          }
+          hover={showPricingAndAddCart ? false : true}
           borderRadius="8px"
         />
       </ImageContainer>
@@ -222,7 +228,7 @@ const ProductCard: React.FC<Props> = ({
         {!showPricingAndAddCart && (
           <Button
             title="See Product"
-            onClick={() => push(`/products/${category}/${productQuery}`)}
+            onClick={() => push(`/products/${product.type}/${productQuery}`)}
             color="#ffffff"
             backgroundColor="orange"
             hoverBackgroundColor="#FBAF85"
@@ -237,7 +243,6 @@ const ProductCard: React.FC<Props> = ({
           <CartControlsContainer>
             <QuantityButton
               total={productQuantity}
-              id={"323fsf"}
               width="120px"
               height="48px"
               marginRight={pageWidth <= 350 ? "0px" : "16px"}
