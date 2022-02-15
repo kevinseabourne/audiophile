@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
+import { LoadingSpinner } from "./loadingSpinner";
 
 interface Props {
   title: string;
@@ -16,6 +17,7 @@ interface Props {
   zIndex?: number;
   responsiveFullWidth?: boolean;
   mediaQuery?: string;
+  status?: string;
 }
 
 const CategoryImageLinks: React.FC<Props> = ({
@@ -32,6 +34,7 @@ const CategoryImageLinks: React.FC<Props> = ({
   zIndex,
   responsiveFullWidth,
   mediaQuery,
+  status,
 }) => {
   const buttonAnimation = {
     hidden: {},
@@ -58,7 +61,8 @@ const CategoryImageLinks: React.FC<Props> = ({
       responsiveFullWidth={responsiveFullWidth}
       mediaQuery={mediaQuery}
     >
-      {title}
+      {status !== "pending" ? title : ""}
+      {status === "pending" && <LoadingSpinner size="30px" stroke="#ffffff" />}
     </Button>
   );
 };
@@ -87,6 +91,7 @@ const Button = styled(motion.button)<ButtonProps>`
   text-transform: uppercase;
   font-size: 13px;
   line-height: 18px;
+  position: relative;
   font-weight: 700;
   letter-spacing: 1px;
   z-index: ${({ zIndex }) => (zIndex ? zIndex : 0)};

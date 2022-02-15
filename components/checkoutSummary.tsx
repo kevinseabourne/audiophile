@@ -32,6 +32,7 @@ interface Props {
   selectedShippingOption: { title: string; eta: string; cost: string };
   formSubmitButtonTitle?: string;
   orderCompletePage?: boolean;
+  status?: string;
 }
 
 const CheckoutSummary: React.FC<Props> = ({
@@ -42,6 +43,7 @@ const CheckoutSummary: React.FC<Props> = ({
   selectedShippingOption,
   formSubmitButtonTitle,
   orderCompletePage,
+  status,
 }) => {
   return (
     <CartSummary>
@@ -83,6 +85,7 @@ const CheckoutSummary: React.FC<Props> = ({
           hoverBackgroundColor="#FBAF85"
           width="100%"
           height="48px"
+          status={status}
         />
       )}
     </CartSummary>
