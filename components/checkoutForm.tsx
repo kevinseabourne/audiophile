@@ -81,8 +81,9 @@ const CheckoutForm: React.FC<Props> = () => {
   };
 
   useEffect(() => {
+    // return to the homepage if the cart is empty on any of checkout pages
     // first render cartItems is empty ignore it and wait for the cartItems to be updated
-    // if then there are no items in the cart route to the homepage
+    // if the second update to the cart is empty route to the homepage
     if (isMounted && !isArrayEmpty(cartItems)) {
       push("/");
     }

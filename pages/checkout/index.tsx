@@ -6,6 +6,7 @@ interface Props {}
 
 const Checkout: React.FC<Props> = () => {
   const { push } = useRouter();
+
   return (
     <Container>
       <BackgroundColor />
