@@ -64,7 +64,7 @@ interface Product {
 }
 
 function App({ Component, pageProps }: AppProps) {
-  const { route } = useRouter();
+  const { route, push } = useRouter();
 
   const [cartItems, setCartItems] = useState<Product[] | []>([]);
   const [cartSubTotalPrice, setCartSubTotalPrice] = useState("");
@@ -126,7 +126,13 @@ function App({ Component, pageProps }: AppProps) {
 
       if (lsCartItemsString) {
         const lsCartItems = JSON.parse(lsCartItemsString);
+
         setCartItems(lsCartItems);
+      } else {
+        // prevent users from visiting the checkout pages is the cart is empty
+        if (route === "/checkout" || route === "/checkout/payment") {
+          push("/");
+        }
       }
     }
 
@@ -238,7 +244,7 @@ function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     // calculate tax and grand total on checkout pages
-    if (route === "/checkout" || route === "/checkout/paymen") {
+    if (route === "/checkout" || route === "/checkout/payment") {
       isArrayEmpty(cartItems) && handleCartGrandTotal();
     }
   }, [route]);
