@@ -64,6 +64,7 @@ const checkoutPaymentForm: React.FC<Props> = ({
 }) => {
   const { push } = useRouter();
   const [cardType, setCardType] = useState("");
+  const [status, setStatus] = useState("idle");
 
   const {
     register,
@@ -273,10 +274,11 @@ const checkoutPaymentForm: React.FC<Props> = ({
     country: string;
     state?: string;
     paymentMethod: string;
-    shippingMethod: { title: string; eta: string; cost: string };
+    shippingMethod: string;
+    shippingMethodObj: { title: string; eta: string; cost: string };
   };
 
-  type orderDataObj = {
+  type paymentDataProps = {
     firstName: string;
     lastName: string;
     address: string;
@@ -289,28 +291,32 @@ const checkoutPaymentForm: React.FC<Props> = ({
     expiry: string;
     cvc: string;
     orderNumber: string;
+  };
+
+  type paymentDataWithoutCardDetailsProps = {
+    firstName: string;
+    lastName: string;
+    address: string;
+    zipCode: string;
+    city: string;
+    country: string;
+    state?: string;
+    orderNumber: string;
+  };
+
+  type orderObjProps = {
+    orderNumber: string;
     orderDate: Date;
     order: Product[];
     vatPrice: string;
     orderSubTotal: string;
     orderGrandTotal: string;
     shippingData: shippingFormData;
+    paymentData: paymentDataWithoutCardDetailsProps;
   };
 
-  const onSubmit: SubmitHandler<FormData> = async (data: orderDataObj) => {
-    const uid = new ShortUniqueId({ length: 10 });
-    data.orderNumber = uid();
-    data.orderDate = new Date();
-    data.order = cartItems;
-    data.vatPrice = vatPrice;
-    data.orderSubTotal = cartSubTotalPrice;
-    data.orderGrandTotal = cartGrandTotalPrice;
-
-    // delete credit card details once payment has been made.
-    delete data.cardName;
-    delete data.cardNumber;
-    delete data.expiry;
-    delete data.cvc;
+  const onSubmit: SubmitHandler<FormData> = async (data: paymentDataProps) => {
+    setStatus("pending");
 
     const lsFormDetailsJSON = window.localStorage.getItem(
       "checkoutShippingDetails"
@@ -318,32 +324,46 @@ const checkoutPaymentForm: React.FC<Props> = ({
 
     if (lsFormDetailsJSON) {
       // add the shipping details to the completed order
-      const lsFormDetails = JSON.parse(lsFormDetailsJSON);
-      data.shippingData = lsFormDetails;
-      data.shippingData.shippingMethod = selectedShippingOption;
-    }
+      let lsFormDetails = JSON.parse(lsFormDetailsJSON);
 
-    // add cart to orders database
-    const response = await addOrder(data);
+      lsFormDetails.shippingMethodObj = selectedShippingOption;
 
-    if (response) {
-      // remove the cart stored in local storage and in state.
-      emptyCart();
-      window.localStorage.removeItem("cartItems");
-      // remove checkout shipping form details in local storage
-      window.localStorage.removeItem("checkoutShippingDetails");
+      // delete credit card details once payment has been made.
+      delete data.cardName;
+      delete data.cardNumber;
+      delete data.expiry;
+      delete data.cvc;
 
-      push(`/order-complete/${data.orderNumber}`);
-    } else {
-      toast.error("An unexpected error has occurred", {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      const uid = new ShortUniqueId({ length: 10 });
+
+      let orderObj: orderObjProps = {
+        orderNumber: uid(),
+        orderDate: new Date(),
+        order: cartItems,
+        vatPrice: vatPrice,
+        orderSubTotal: cartSubTotalPrice,
+        orderGrandTotal: cartGrandTotalPrice,
+        shippingData: lsFormDetails,
+        paymentData: data,
+      };
+
+      // add cart to orders database
+      const response = await addOrder(orderObj);
+
+      if (response) {
+        setStatus("resolved");
+        push(`/order-complete/${orderObj.orderNumber}`);
+      } else {
+        toast.error("An unexpected error has occurred", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
     }
   };
 
@@ -464,6 +484,7 @@ const checkoutPaymentForm: React.FC<Props> = ({
           formSubmitButtonTitle="Complete Payment"
           cartItems={cartItems}
           vatPrice={vatPrice}
+          status={status}
           cartSubTotalPrice={cartSubTotalPrice}
           selectedShippingOption={selectedShippingOption}
           cartGrandTotalPrice={cartGrandTotalPrice}

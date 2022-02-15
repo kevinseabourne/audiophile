@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import styled from "styled-components";
@@ -9,6 +9,7 @@ import ImageLoader from "../../../components/reusable/imageLoader";
 import Button from "../../../components/reusable/button";
 import { isObjEmpty } from "../../../lib/utils/isEmpty";
 import { toast } from "react-toastify";
+import AppContext from "../../../context/appContext";
 
 interface order {
   dateAdded: string;
@@ -42,10 +43,11 @@ interface shippingData {
   state: string;
   zipCode: string;
   paymentMethod: string;
-  shippingMethod: { title: string; eta: string; cost: string };
+  shippingMethod: string;
+  shippingMethodObj: { title: string; eta: string; cost: string };
 }
 
-type Order = {
+interface paymentData {
   firstName: string;
   lastName: string;
   address: string;
@@ -54,10 +56,15 @@ type Order = {
   country: string;
   state?: string;
   orderNumber: string;
+}
+
+type Order = {
+  orderNumber: string;
   orderDate: Date;
   orderSubTotal: string;
   orderGrandTotal: string;
   shippingData: shippingData;
+  paymentData: paymentData;
   vatPrice: string;
   order: order[];
 };
@@ -66,11 +73,41 @@ interface Props {
   order: Order;
 }
 
+interface ContextProps {
+  emptyCart: () => void;
+}
+
 const OrderComplete: React.FC<Props> = ({ order }) => {
+  const { emptyCart } = useContext<ContextProps>(AppContext);
   const { push } = useRouter();
 
   useEffect(() => {
+    console.log(order);
     if (!isObjEmpty(order)) {
+      // if defined delete cart Items and checkout details
+      const lsFormDetailsLS = window.localStorage.getItem(
+        "checkoutShippingDetails"
+      );
+      const cartItemsLS = window.localStorage.getItem("cartItems");
+      const lsRenderPaymentCheckoutLS = window.localStorage.getItem(
+        "lsRenderPaymentCheckout"
+      );
+
+      if (lsRenderPaymentCheckoutLS) {
+        // remove permission to view payment checkout page
+        window.localStorage.removeItem("lsRenderPaymentCheckout");
+      }
+      if (lsFormDetailsLS) {
+        // remove checkout shipping form details in local storage
+        window.localStorage.removeItem("checkoutShippingDetails");
+      }
+
+      if (cartItemsLS) {
+        // remove the cart stored in local storage and in state.
+        emptyCart();
+        window.localStorage.removeItem("cartItems");
+      }
+    } else {
       toast.error("An unexpected error has occurred", {
         position: "bottom-right",
         autoClose: 5000,
@@ -96,7 +133,7 @@ const OrderComplete: React.FC<Props> = ({ order }) => {
           />
           <OrderThanksContainer>
             <OrderTitle>order {order.orderNumber}</OrderTitle>
-            <Title>Thank You {order.firstName} !</Title>
+            <Title>Thank You {order.shippingData.firstName} !</Title>
           </OrderThanksContainer>
         </TickOrderContainer>
         <SubTitle>Your order is confirmed</SubTitle>
@@ -133,24 +170,25 @@ const OrderComplete: React.FC<Props> = ({ order }) => {
               <RowContainer>
                 <BoldSmallTitle>Billing Address</BoldSmallTitle>
                 <Text>
-                  {order.firstName} {order.lastName}
+                  {order.paymentData.firstName} {order.paymentData.lastName}
                 </Text>
-                <Text>{order.address}</Text>
+                <Text>{order.paymentData.address}</Text>
                 <Text>
-                  {order.city} {order.state} {order.zipCode}
+                  {order.paymentData.city} {order.paymentData.state}{" "}
+                  {order.paymentData.zipCode}
                 </Text>
-                <Text>{order.country}</Text>
+                <Text>{order.paymentData.country}</Text>
               </RowContainer>
             )}
           </CustomerInfoInnerContainer>
           <CustomerInfoInnerContainer>
             <RowContainer>
               <BoldSmallTitle>Shipping Method</BoldSmallTitle>
-              <Text>{order.shippingData.shippingMethod.title}</Text>
+              <Text>{order.shippingData.shippingMethodObj.title}</Text>
             </RowContainer>
             <RowContainer>
               <BoldSmallTitle>Estimated Delivery Time</BoldSmallTitle>
-              <Text>{order.shippingData.shippingMethod.eta}</Text>
+              <Text>{order.shippingData.shippingMethodObj.eta}</Text>
             </RowContainer>
           </CustomerInfoInnerContainer>
         </CustomerInformation>
@@ -171,7 +209,7 @@ const OrderComplete: React.FC<Props> = ({ order }) => {
         orderCompletePage={true}
         vatPrice={order.vatPrice}
         cartItems={order.order}
-        selectedShippingOption={order.shippingData.shippingMethod}
+        selectedShippingOption={order.shippingData.shippingMethodObj}
         cartSubTotalPrice={order.orderSubTotal}
         cartGrandTotalPrice={order.orderGrandTotal}
       />
@@ -186,9 +224,9 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     data = await getOrder(orderNumber);
   }
 
-  if (!isArrayEmpty(data)) {
-    return { notFound: true };
-  }
+  // if (!isArrayEmpty(data)) {
+  //   return { notFound: true };
+  // }
 
   const order = data[0];
 

@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Input } from "./reusable/input";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -56,6 +56,7 @@ type FormData = {
   state?: string;
   paymentMethod: string;
   shippingMethod: string;
+  shippingMethodObj: { title: string; eta: string; cost: string }; // added after form is submitted
 };
 
 const CheckoutShippingForm: React.FC<Props> = ({
@@ -67,8 +68,8 @@ const CheckoutShippingForm: React.FC<Props> = ({
   vatPrice,
   cartGrandTotalPrice,
   handlePaymentCheckoutRender,
-  emptyCart,
 }) => {
+  const [status, setStatus] = useState("idle");
   const { push } = useRouter();
 
   const defaultValues = {
@@ -132,6 +133,7 @@ const CheckoutShippingForm: React.FC<Props> = ({
   }, []);
 
   const shipMethod = watch("shippingMethod");
+  const payMethod = watch("paymentMethod");
 
   useEffect(() => {
     // update state in the app component to re calculate tax and the grand total
@@ -222,28 +224,17 @@ const CheckoutShippingForm: React.FC<Props> = ({
     },
   };
 
-  type OrderTypes = {
-    name: string;
-    email: string;
-    phone: string;
-    firstName: string;
-    lastName: string;
-    address: string;
-    zipCode: string;
-    city: string;
-    country: string;
-    state?: string;
-    paymentMethod: string;
-    shippingMethod: string;
+  type orderDataObj = {
     orderNumber: string;
     orderDate: Date;
     order: Product[];
     vatPrice: string;
     orderSubTotal: string;
     orderGrandTotal: string;
+    shippingData: FormData;
   };
 
-  const onSubmit: SubmitHandler<FormData> = async (data: OrderTypes) => {
+  const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
     const { paymentMethod } = data;
 
     if (paymentMethod === "eMoney") {
@@ -256,24 +247,28 @@ const CheckoutShippingForm: React.FC<Props> = ({
 
       push("/checkout/payment");
     } else {
-      // Cash delivery submit order
-      const uid = new ShortUniqueId({ length: 10 });
-      data.orderNumber = uid();
-      data.orderDate = new Date();
-      data.order = cartItems;
-      data.vatPrice = vatPrice;
-      data.orderSubTotal = cartSubTotalPrice;
-      data.orderGrandTotal = cartGrandTotalPrice;
+      setStatus("pending");
 
-      const response = addOrder(data);
+      data.shippingMethodObj = selectedShippingOption;
+      const uid = new ShortUniqueId({ length: 10 });
+
+      let orderObj: orderDataObj = {
+        orderNumber: uid(),
+        orderDate: new Date(),
+        order: cartItems,
+        vatPrice: vatPrice,
+        orderSubTotal: cartSubTotalPrice,
+        orderGrandTotal: cartGrandTotalPrice,
+        shippingData: data,
+      };
+      // Cash delivery submit order
+
+      const response = addOrder(orderObj);
 
       if (response) {
-        // remove the cart stored in local storage and in state.
-        emptyCart();
-        window.localStorage.removeItem("cartItems");
-
+        setStatus("resolved");
         // navigate to the order complete page
-        push(`/order-complete/${data.orderNumber}`);
+        push(`/order-complete/${orderObj.orderNumber}`);
       } else {
         toast.error("An unexpected error has occurred", {
           position: "bottom-right",
@@ -450,12 +445,15 @@ const CheckoutShippingForm: React.FC<Props> = ({
         </InnerContainer>
 
         <CheckoutSummary
-          formSubmitButtonTitle="Continue"
+          formSubmitButtonTitle={
+            payMethod === "cashDelivery" ? "Complete Order" : "Continue"
+          }
           cartItems={cartItems}
           vatPrice={vatPrice}
           cartSubTotalPrice={cartSubTotalPrice}
           selectedShippingOption={selectedShippingOption}
           cartGrandTotalPrice={cartGrandTotalPrice}
+          status={status}
         />
       </Form>
     </Container>

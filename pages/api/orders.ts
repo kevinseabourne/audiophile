@@ -78,7 +78,23 @@ interface Product {
   watch: {};
 }
 
-type Order = {
+type shippingFormData = {
+  name: string;
+  email: string;
+  phone: string;
+  firstName: string;
+  lastName: string;
+  address: string;
+  zipCode: string;
+  city: string;
+  country: string;
+  state?: string;
+  paymentMethod: string;
+  shippingMethod: string;
+  shippingMethodObj: { title: string; eta: string; cost: string };
+};
+
+type paymentDataWithoutCardDetailsProps = {
   firstName: string;
   lastName: string;
   address: string;
@@ -87,13 +103,20 @@ type Order = {
   country: string;
   state?: string;
   orderNumber: string;
+};
+
+type Order = {
+  orderNumber: string;
   orderDate: Date;
   order: Product[];
+  vatPrice: string;
+  orderSubTotal: string;
+  orderGrandTotal: string;
+  shippingData: shippingFormData;
+  paymentData?: paymentDataWithoutCardDetailsProps;
 };
 
 export async function addOrder(order: Order) {
-  try {
-  } catch (ex) {}
   try {
     const auth = getAuth();
     signInWithEmailAndPassword(
