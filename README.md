@@ -13,7 +13,7 @@ This e-commerce website allows you to purchase headphones, speakers or earphones
 • Big.js
 • Accounting.js
 
-## Stack
+## Features
 
 • Http Requests
 • Cart Functionality
