@@ -5,7 +5,7 @@ This e-commerce website allows you to purchase headphones, speakers or earphones
 ## Stack
 
 • Next.js
-• Typescript
+• TypeScript
 • Styled Components
 • Firebase
 • Framer Motion
@@ -15,7 +15,7 @@ This e-commerce website allows you to purchase headphones, speakers or earphones
 
 ## Features
 
-• Http Requests
+• HTTP Requests
 • Cart Functionality
 • Checkout Process
 • Dynamic Routes
